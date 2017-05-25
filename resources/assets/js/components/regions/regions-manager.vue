@@ -89,7 +89,7 @@
 													<span v-if="squad.locked" class="label label-danger"><i class="fa fa-lock"></i> Locked</span>
 												</div>
 												<div class="col-xs-3 text-right">
-													<tooltip effect="scale" placement="left" content="Remove from Region">
+													<tooltip effect="scale" placement="top" content="Remove from Region">
 														<a class="btn btn-xs btn-primary-hollow" @click="removeFromRegion(squad)">
 															<i class="fa fa-minus"></i>
 														</a>
@@ -234,7 +234,7 @@
 										<span v-if="squad.locked" class="label label-danger"><i class="fa fa-lock"></i> Locked</span>
 									</div>
 									<div class="col-xs-3 text-right">
-										<tooltip effect="scale" placement="left" :content="!this.currentRegion ? 'Select a Region' : 'Add to Region'">
+										<tooltip effect="scale" placement="top" :content="!this.currentRegion ? 'Select a Region' : 'Add to Region'">
 											<a class="btn btn-xs btn-primary-hollow" @click="addToRegion(squad)" :class="{ 'disabled': !this.currentRegion}">
 												<i class="fa fa-plus"></i>
 											</a>
