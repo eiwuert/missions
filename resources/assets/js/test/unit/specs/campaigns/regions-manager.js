@@ -13,14 +13,6 @@ const vm = new Vue(RootInstance).$mount('app');
 
 let RegionsManager = vm.$refs.testComponent;
 
-test('countries loaded', t => {
-    t.truthy(RegionsManager.UTILITIES.countries.length);
-});
-
-// test('regions loaded', t => {
-//     t.truthy(RegionsManager.regions.length);
-// });
-
 test('create region w/ modal', async t => {
     t.false(RegionsManager.showRegionModal);
     RegionsManager.openRegionModal();

@@ -52,48 +52,36 @@
 			<template v-if="currentRegion">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h5>{{currentRegion.name | capitalize}} <span class="small">&middot; Details</span></h5>
+						<div class="row">
+							<div class="col-xs-6">
+								<h5>{{currentRegion.name | capitalize}} <span class="small">&middot; Details</span></h5>
+							</div>
+							<div class="col-xs-6 text-right">
+								<h5><span v-if="currentRegion.teams" v-text="currentRegion.teams.data.length"></span> Squads</h5>
+							</div>
+						</div>
+
 					</div><!-- end panel-heading -->
 					<div class="panel-body">
 						<div class="row">
-							<div class="col-sm-5">
-								<div class="row">
-									<div class="col-sm-8">
-										<label>Country</label>
-									</div><!-- end col -->
-									<div class="col-sm-4 text-right">
-										<p class="small" style="margin:3px 0;">{{currentRegion.country.name}}</p>
-									</div><!-- end col -->
-								</div><!-- end row -->
-								<hr class="divider sm">
-								<div class="row">
-									<div class="col-sm-8">
-										<label>Callsign</label>
-									</div><!-- end col -->
-									<div class="col-sm-4 text-right">
-										<p class="small" style="margin:3px 0;">{{currentRegion.callsign || 'None Set'}}</p>
-									</div><!-- end col -->
-								</div><!-- end row -->
-
-							</div><!-- end col -->
-							<div class="col-sm-7">
-								<label>Region Squads <span v-if="currentRegion.teams" class="badge badge-primary" v-text="currentRegion.teams.data.length"></span></label>
-								<hr class="divider sm">
+							<div class="col-xs-12">
 								<template v-if="currentRegion.teams.data.length">
-									<div class="list-group">
-										<div class="list-group-item" v-for="squad in currentRegion.teams.data">
-											<div class="row">
-												<div class="col-xs-9">
-													{{ squad.callsign | capitalize }} &middot; <span class="small">Members: {{ squad.members_count || 0 }}</span><br>
-													<span v-if="squad.type" class="label label-info" v-text="squad.type.data.name | capitalize"></span>
-													<span v-if="squad.locked" class="label label-danger"><i class="fa fa-lock"></i> Locked</span>
-												</div>
-												<div class="col-xs-3 text-right">
-													<tooltip effect="scale" placement="left" content="Remove from Region">
-														<a class="btn btn-xs btn-primary-hollow" @click="removeFromRegion(squad)">
-															<i class="fa fa-minus"></i>
-														</a>
-													</tooltip>
+									<div class="col-xs-6" v-for="squad in currentRegion.teams.data">
+										<div class="panel panel-default">
+											<div class="panel-body">
+												<div class="row">
+													<div class="col-xs-9">
+														{{ squad.callsign | capitalize }} &middot; <span class="small">Members: {{ squad.members_count || 0 }}</span><br>
+														<span v-if="squad.type" class="label label-info" v-text="squad.type.data.name | capitalize"></span>
+														<span v-if="squad.locked" class="label label-danger"><i class="fa fa-lock"></i> Locked</span>
+													</div>
+													<div class="col-xs-3 text-right">
+														<tooltip effect="scale" placement="top" content="Remove from Region">
+															<a class="btn btn-xs btn-primary-hollow" @click="removeFromRegion(squad)">
+																<i class="fa fa-minus"></i>
+															</a>
+														</tooltip>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -141,19 +129,19 @@
 
 					<template v-if="regions.length">
 						<div class="panel-group" id="regionsAccordion" role="tablist" aria-multiselectable="true">
-							<div class="panel panel-default" v-for="region in regions | orderBy 'name'">
+							<div class="panel panel-default" :class="{ 'panel-danger': currentRegion && currentRegion.id === region.id }" v-for="region in regions | orderBy 'name'">
 								<div class="panel-heading" role="tab" id="headingOne">
 									<h5 class="panel-title">
 										<div class="row">
 											<div class="col-xs-9">
-												<a role="button" @click="makeCurrentRegion(region)">
-													{{ region.name | capitalize }} <span class="small">&middot; {{ region.teams && region.teams.data.length ? region.teams.data.length : 0 }} Squads</span><br>
-													<label>{{ region.country.name }}</label>
+												<a :class="{ 'text-white': currentRegion && currentRegion.id === region.id }" role="button" @click="makeCurrentRegion(region)">
+													{{ region.name | capitalize }} <span class="small" :class="{ 'text-white': currentRegion && currentRegion.id === region.id }">&middot; {{ region.teams && region.teams.data.length ? region.teams.data.length : 0 }} Squads</span><br>
+													<label :class="{ 'text-white': currentRegion && currentRegion.id === region.id }">{{ region.country.name }}</label>
 												</a>
 											</div>
 											<div class="col-xs-3 text-right action-buttons">
 												<dropdown type="default">
-													<button slot="button" type="button" class="btn btn-xs btn-primary-hollow dropdown-toggle">
+													<button slot="button" type="button" class="btn btn-xs dropdown-toggle" :class="{ 'btn-white-hollow': currentRegion && currentRegion.id === region.id, 'btn-primary-hollow':  currentRegion && currentRegion.id !== region.id}">
 														<span class="fa fa-ellipsis-h"></span>
 													</button>
 													<ul slot="dropdown-menu" class="dropdown-menu dropdown-menu-right">
@@ -162,7 +150,7 @@
 														<li><a @click="openRegionDeleteModal(region)"><i class="fa fa-trash"></i> Delete</a></li>
 													</ul>
 												</dropdown>
-												<a class="btn btn-xs btn-default-hollow" role="button" data-toggle="collapse" data-parent="#regionAccordion" :href="'#regionItem' + $index" aria-expanded="true" aria-controls="collapseOne">
+												<a class="btn btn-xs" :class="{ 'btn-white-hollow': currentRegion && currentRegion.id === region.id, 'btn-primary-hollow':  currentRegion && currentRegion.id !== region.id }" role="button" data-toggle="collapse" data-parent="#regionAccordion" :href="'#regionItem' + $index" aria-expanded="true" aria-controls="collapseOne">
 													<i class="fa fa-angle-down"></i>
 												</a>
 											</div>
@@ -199,6 +187,10 @@
 						<hr class="divider inv">
 						<p class="text-center text-italic text-muted"><em>Create a region to begin.</em></p>
 					</template>
+
+					<div class="col-xs-12 text-center">
+						<pagination :pagination.sync="regionsPagination" :callback="getRegions"></pagination>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -234,7 +226,7 @@
 										<span v-if="squad.locked" class="label label-danger"><i class="fa fa-lock"></i> Locked</span>
 									</div>
 									<div class="col-xs-3 text-right">
-										<tooltip effect="scale" placement="left" :content="!this.currentRegion ? 'Select a Region' : 'Add to Region'">
+										<tooltip effect="scale" placement="top" :content="!this.currentRegion ? 'Select a Region' : 'Add to Region'">
 											<a class="btn btn-xs btn-primary-hollow" @click="addToRegion(squad)" :class="{ 'disabled': !this.currentRegion}">
 												<i class="fa fa-plus"></i>
 											</a>
@@ -522,6 +514,9 @@
                     } else {
                         return response.body.data;
                     }
+                }, function (response) {
+                    console.log(response);
+                    return response.body.data;
                 });
             },
 
@@ -548,7 +543,6 @@
 
                 if (!this.selectedRegion.call_sign)
                     delete this.selectedRegion.call_sign;
-
 
                 return this.RegionsResource.save({ campaign: this.campaignId, include: 'teams.groups', }, this.selectedRegion).then(function (response) {
                     let region = response.body.data;
