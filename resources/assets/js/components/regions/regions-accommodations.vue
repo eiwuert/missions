@@ -361,9 +361,13 @@
                 };
             },
 	        startNewAccommodation() {
-                let accommodation = _.extend({}, this.AccommodationFactory());
-                this.currentAccommodation = this.loadAccommodationRoomTypes(accommodation);
-                this.showAccommodationManageModal = true;
+                if (this.currentRegion) {
+                    let accommodation = _.extend({}, this.AccommodationFactory());
+                    this.currentAccommodation = this.loadAccommodationRoomTypes(accommodation);
+                    this.showAccommodationManageModal = true;
+                } else {
+                    this.$root.$emit('showInfo', 'Please select a region to begin.');
+                }
 	        },
 	        editAccommodation(accommodation) {
                 this.currentAccommodation = this.loadAccommodationRoomTypes(accommodation);
@@ -523,7 +527,7 @@
                 });
             },
             getRoomTypes(){
-                return this.$http.get('rooming/types')
+                return this.$http.get('rooming/types', { params: { campaign: this.campaignId } })
                     .then(function (response) {
                             return this.roomTypes = response.body.data;
                         },
