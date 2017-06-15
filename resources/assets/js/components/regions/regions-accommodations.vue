@@ -18,17 +18,20 @@
 		</aside>
 
 		<div class="col-sm-8">
-			<h4>Accommodations</h4>
+            <div class="row">
+                <div class="col-xs-6">
+    			     <h4>Accommodations</h4>
+                </div>
+                <div class="col-xs-6 text-right">
+                    <button class="btn btn-primary btn-sm" type="button" @click="startNewAccommodation" >
+                        <i class="fa fa-plus"></i> New Accommodation
+                    </button>
+                </div>
+            </div>
 			<hr class="divider sm">
 			<template v-if="currentRegion">
 				<!-- Search and Filter -->
 				<form class="form-inline row" @submit.prevent>
-					<div class="col-xs-12 text-right">
-						<button class="btn btn-primary btn-sm" type="button" @click="startNewAccommodation" >
-							Create an Accommodation
-						</button>
-						<hr class="divider sm inv">
-					</div>
 					<div class="form-group col-sm-8">
 						<div class="input-group input-group-sm col-xs-12">
 							<input type="text" class="form-control" v-model="accommodationsSearch" debounce="300" placeholder="Search">
@@ -237,12 +240,15 @@
 						<div class="list-group">
 							<a @click="currentRegion = region" class="list-group-item" :class="{ 'active': currentRegion && currentRegion.id === region.id}" v-for="region in regions">
 								<h4 class="list-group-item-heading">
-									{{ region.name | capitalize }} <span v-if="region.callsign"> &middot; <small class="label label-default" :style="'font-size:50%; color: #FFF !important; background-color: ' + region.callsign" v-text="region.country.name|capitalize"></small></span>
+									{{ region.name | capitalize }}
 									<span class="badge pull-right" v-text="region.accommodations.data.length"></span>
 								</h4>
-								<p class="list-group-item-text hidden">
-
-								</p>
+                                <p>
+                                    <span v-if="region.callsign"> 
+                                        <span class="label label-default" :style="'color: #FFF !important; background-color: ' + region.callsign" v-text="region.callsign|capitalize"></span>
+                                    </span>
+                                    <span class="small">{{ region.country.name | capitalize }}</span>
+                                </p>
 							</a>
 						</div>
 						<div class="col-xs-12 text-center">
