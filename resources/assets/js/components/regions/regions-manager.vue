@@ -138,11 +138,19 @@
 										<div class="row">
 											<div class="col-xs-9">
 												<a role="button" @click="makeCurrentRegion(region)">
-													{{ region.name | capitalize }} <span class="small">&middot; {{ region.teams && region.teams.data.length ? region.teams.data.length : 0 }} Squads</span><br>
-													<label>{{ region.country.name }}</label>
+													<h4>{{ region.name | capitalize }}</h4>
+													<p>
+					                                    <span v-if="region.callsign">
+					                                        <span class="label label-default" :style="'color: #FFF !important; background-color: ' + region.callsign" v-text="region.callsign|capitalize"></span>
+					                                    </span>
+														<span class="small">{{ region.country.name | capitalize }}</span>
+													</p>
 												</a>
 											</div>
 											<div class="col-xs-3 text-right action-buttons">
+												<span class="badge badge-danger" style="background-color: #F6323E;">
+													{{region.teams && region.teams.data.length ? region.teams.data.length : 0}}
+												</span>
 												<dropdown type="default">
 													<button slot="button" type="button" class="btn btn-xs btn-primary-hollow dropdown-toggle">
 														<span class="fa fa-ellipsis-h"></span>
@@ -474,7 +482,7 @@
                 });
             },
             getTeamTypes() {
-                return this.$http.get('teams/types').then(function (response) {
+                return this.$http.get('teams/types', { params: { campaign: this.campaignId } }).then(function (response) {
                     return this.squadTypes = response.body.data;
                 }, function (error) {
                     console.log(error);
