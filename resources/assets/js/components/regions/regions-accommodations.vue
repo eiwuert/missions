@@ -244,7 +244,7 @@
 									<span class="badge pull-right" v-text="region.accommodations.data.length"></span>
 								</h4>
                                 <p>
-                                    <span v-if="region.callsign"> 
+                                    <span v-if="region.callsign">
                                         <span class="label label-default" :style="'color: #FFF !important; background-color: ' + region.callsign" v-text="region.callsign|capitalize"></span>
                                     </span>
                                     <span class="small">{{ region.country.name | capitalize }}</span>

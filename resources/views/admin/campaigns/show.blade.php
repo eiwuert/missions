@@ -51,7 +51,7 @@
                         <li class="{{ $tab == 'squad-types' ? 'active' : '' }}">
                             <a href="{{ url('admin/campaigns/'.$campaign->id.'/room-types') }}">Room Types</a>
                         </li>
-                        {{-- <li><a href="{{ url('admin/campaigns/'.$campaign->id.'/accommodations') }}">Accommodations</a></li> --}}
+                        <li><a href="{{ url('admin/campaigns/'.$campaign->id.'/accommodations') }}">Accommodations</a></li>
                     </ul>
                 </li>
                 <li role="presentation" class="{{ $tab == 'regions' ? 'active' : '' }} dropdown">
