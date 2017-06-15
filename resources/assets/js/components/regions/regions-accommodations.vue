@@ -99,7 +99,7 @@
 									    </div>
 								    </div>
 
-								    <div class="row">
+								    <div class="row" v-if="currentAccommodation.room_types_settings">
 									    <legend>Room Types</legend>
 									    <div class="form-group col-sm-6" v-for="type in roomTypes">
 										    <label :for="'settingsType-' + type.id" class="" v-text="type.name"></label>
@@ -281,6 +281,7 @@
 <style></style>
 <script type="text/javascript">
     import _ from 'underscore';
+    import $ from 'jquery';
     import vSelect from 'vue-select';
     import errorHandler from'../error-handler.mixin';
     import utilities from'../utilities.mixin';
@@ -328,7 +329,8 @@
         },
         watch: {
             showAccommodationManageModal(val) {
-                $('#AccommodationModal').collapse(val ? 'show' : 'hide')
+                if ($.fn.collapse)
+                    $('#AccommodationModal').collapse(val ? 'show' : 'hide')
             },
             currentRegion() {
                 this.accommodationsPagination.current_page = 1;
@@ -390,7 +392,8 @@
                 if (this.$AccommodationForm.valid) {
                     return this.editMode ? this.updateAccommodation() : this.saveAccommodation();
                 } else {
-                    this.$root.$emit('showError');
+                    this.$root.$emit('showError', 'Please check the form.');
+                    return false;
                 }
 
 	        },

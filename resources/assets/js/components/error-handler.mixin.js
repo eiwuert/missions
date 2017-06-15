@@ -1,5 +1,6 @@
 // The purpose of this mixin is to work along with custom directives to provide a standard system of
 // error handling and error message rendering that is consistent and predictable.
+import _ from 'underscore';
 export default {
     data(){
         return {

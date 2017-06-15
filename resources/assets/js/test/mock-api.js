@@ -3206,6 +3206,109 @@ export default {
                             "uri": "/api/regions/45bd0918-bffa-447e-8af2-fb135b82a8c8/accommodations/faed1eec-e4d2-483e-a23e-b609b5d54164"
                         }
                     ]
+                },
+                {
+                    "id": "c9006243-4942-4709-932c-ace2cc6d5fc1",
+                    "region_id": "45bd0918-bffa-447e-8af2-fb135b82a8c8",
+                    "name": "4 Seasons Hotel",
+                    "rooms_count": {
+                        "Standard": 0,
+                        "Double": 0,
+                        "Double (married)": 0,
+                        "Triple": 0,
+                        "total": 0
+                    },
+                    "room_types": { "total": 0 },
+                    "occupants_count": 0,
+                    "address_one": null,
+                    "address_two": null,
+                    "city": null,
+                    "state": null,
+                    "zip": null,
+                    "phone": null,
+                    "fax": null,
+                    "country": {
+                        "code": "ni",
+                        "name": "Nicaragua"
+                    },
+                    "email": null,
+                    "url": null,
+                    "short_desc": "",
+                    "created_at": "2017-05-26 17:30:02",
+                    "updated_at": "2017-05-26 17:30:02",
+                    "deleted_at": null,
+                    "links": [
+                        {
+                            "rel": "self",
+                            "uri": "/api/regions/45bd0918-bffa-447e-8af2-fb135b82a8c8/accommodations/c9006243-4942-4709-932c-ace2cc6d5fc1"
+                        }
+                    ]
+                }
+            ],
+            "meta": {
+                "pagination": {
+                    "total": 2,
+                    "count": 2,
+                    "per_page": 10,
+                    "current_page": 1,
+                    "total_pages": 1,
+                    "links": []
+                }
+            }
+        };
+
+        if (pathMatch.accommodation) {
+            body.data = _.findWhere(body.data, {id: pathMatch.accommodation});
+            delete body.meta;
+        }
+
+        return {
+            body: body,
+            status: 200,
+            statusText: 'OK',
+            headers: {/*headers*/},
+            delay: Settings.delay, // millisecond
+        }
+    },
+    ['POST *regions/:region/accommodations'] (pathMatch, query, request) {
+        let body = {
+            "data": [
+                {
+                    "id": "c9006243-4942-4709-932c-ace2cc6d5fc1",
+                    "region_id": "45bd0918-bffa-447e-8af2-fb135b82a8c8",
+                    "name": "4 Seasons Hotel",
+                    "rooms_count": {
+                        "Standard": 0,
+                        "Double": 0,
+                        "Double (married)": 0,
+                        "Triple": 0,
+                        "total": 0
+                    },
+                    "room_types": { "total": 0 },
+                    "occupants_count": 0,
+                    "address_one": null,
+                    "address_two": null,
+                    "city": null,
+                    "state": null,
+                    "zip": null,
+                    "phone": null,
+                    "fax": null,
+                    "country": {
+                        "code": "ni",
+                        "name": "Nicaragua"
+                    },
+                    "email": null,
+                    "url": null,
+                    "short_desc": "",
+                    "created_at": "2017-05-26 17:30:02",
+                    "updated_at": "2017-05-26 17:30:02",
+                    "deleted_at": null,
+                    "links": [
+                        {
+                            "rel": "self",
+                            "uri": "/api/regions/45bd0918-bffa-447e-8af2-fb135b82a8c8/accommodations/c9006243-4942-4709-932c-ace2cc6d5fc1"
+                        }
+                    ]
                 }
             ],
             "meta": {
