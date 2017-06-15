@@ -54,7 +54,7 @@
                         {{-- <li><a href="{{ url('admin/campaigns/'.$campaign->id.'/accommodations') }}">Accommodations</a></li> --}}
                     </ul>
                 </li>
-                {{-- <li role="presentation" class="{{ $tab == 'regions' ? 'active' : '' }} dropdown">
+                 <li role="presentation" class="{{ $tab == 'regions' ? 'active' : '' }} dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                       Regions <span class="caret"></span>
                     </a>
@@ -64,7 +64,7 @@
                             <a href="{{ url('admin/campaigns/'.$campaign->id.'/regions') }}">Squad Assignments</a>
                         </li>
                     </ul>
-                </li> --}}
+                </li>
                 {{-- <li role="presentation" class="{{ $tab == 'transports' ? 'active' : '' }} dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Transportation <span class="caret"></span></a>
                     <ul class="dropdown-menu">
