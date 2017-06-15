@@ -276,7 +276,7 @@
 	                per_page: this.per_page,
                     include: 'group'
                 });
-
+                
                 if (this.isAdminRoute) {
 					params.campaign = this.campaignId;
                 } else {
@@ -284,7 +284,6 @@
                     params.group = this.groupId;
 
                 }
-
                 this.exportFilters = params;
 
                 return this.PlansResource.get(params).then(function (response) {
@@ -421,7 +420,6 @@
                         let plan = response.body.data;
                         this.plans.push(plan);
                         this.showPlanModal = false;
-                        //this.loadManager(plan);
                     }, function (response) {
                         console.log(response);
                         this.$root.$emit('showError', response.body.message);

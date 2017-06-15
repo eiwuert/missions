@@ -232,6 +232,11 @@ $api->version('v1', [
     $api->post('speaker', 'UtilitiesController@sendSpeakerRequestEmail');
     $api->post('sponsor-project', 'UtilitiesController@sendProjectSponsorEmail');
 
+    $api->group(['prefix' => 'reports'], function($api)
+    {
+        $api->post('reservations/{type}', 'Reporting\ReservationsController@store');
+    });
+
     /*
     |--------------------------------------------------------------------------
     | Mobile Specific Routes
