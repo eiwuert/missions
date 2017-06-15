@@ -368,7 +368,7 @@
                 _.each(this.roomTypes, function (type) {
                     // the settings will be traced by the type ids
                     // then we will attempt to find the assignment in the current plan's settings (expecting a number) or set to 0
-                    let assignment = accommodation.room_types.hasOwnProperty(type.name) ? accommodation.room_types[type.name] : 0;
+                    let assignment = accommodation.room_types && accommodation.room_types.hasOwnProperty(type.name) ? accommodation.room_types[type.name] : 0;
                     accommodation.room_types_settings[type.id] = assignment;
                     // we are using method to track which room types need to be updated or posted
                     accommodation.room_types_settings[type.id + '_method'] = assignment > 0 ? 'PUT' :'POST';
