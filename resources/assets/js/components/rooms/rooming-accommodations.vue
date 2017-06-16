@@ -52,18 +52,21 @@
 		</aside>
 		<div class="row">
 			<div class="col-sm-7">
+                <h4>Accommodations</h4>
+                <hr class="divider sm">
 				<template v-if="currentAccommodation">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h3 class="panel-title">
-								{{ currentAccommodation.name | capitalize }} &middot; <span>Details</span>
-							</h3>
+							<h5>
+								{{ currentAccommodation.name | capitalize }} <span> &middot; Rooms</span>
+                                <span v-if="currentAccommodation.room_types.total === currentAccommodation.rooms_count.total" class="badge text-uppercase pull-right" style="padding:3px 10px;font-size:10px;line-height:1.4;">Full</span>
+							</h5>
 						</div>
 						<div class="panel-body">
 							<form class="form-inline row">
 								<div class="form-group col-xs-8">
 									<div class="input-group input-group-sm col-xs-12">
-										<input type="text" class="form-control" v-model="roomsSearch" debounce="300" placeholder="Search">
+										<input type="text" class="form-control" v-model="roomsSearch" debounce="300" placeholder="Search rooms">
 										<span class="input-group-addon"><i class="fa fa-search"></i></span>
 									</div>
 									<hr class="divider sm inv">
@@ -71,7 +74,7 @@
 								<div class="col-xs-4">
 									<button class="btn btn-default btn-sm btn-block" type="button" @click="showRoomsFilters=!showRoomsFilters">
 										<i class="fa fa-filter"></i>
-										Filters
+										Filter
 									</button>
 								</div>
 							</form>
@@ -80,8 +83,10 @@
 								<div class="list-group">
 									<div class="list-group-item"  v-for="room in currentAccommodationRooms" >
 										<h5 class="list-group-item-heading">
-											{{ (room.label ? (room.label + ' - ' + room.type) : room.type) | capitalize }} <span v-if="getRoomLeader(room)">&middot; {{getRoomLeader(room).given_names}} {{getRoomLeader(room).surname}}</span>
-											<span class="pull-right"><i class="fa fa-users"></i> {{ room.occupants_count || 0 }}</span>
+											{{ (room.label ? (room.label + ' - ' + room.type) : room.type) | capitalize }} <span v-if="getRoomLeader(room)"> <small> ({{getRoomLeader(room).given_names}} {{getRoomLeader(room).surname}})</small></span>
+											<span class="pull-right">
+                                                {{ room.occupants_count || 0 }} <i class="fa fa-users"></i>
+                                            </span>
 										</h5>
 
 									</div>
@@ -109,57 +114,52 @@
 				<hr class="divider">
 				<template v-if="selectRegionView">
 					<div class="panel panel-default">
-						<!-- Default panel contents -->
-						<div class="panel-heading">Regions</div>
-					    <div class="panel-body">
-						    <table class="table table-condensed table-hover">
-							    <thead>
-							    <tr>
-								    <th>Name</th>
-								    <th>Teams</th>
-								    <th>Accommodations</th>
-								    <th><i class="fa fa-cog"></i></th>
-							    </tr>
-							    </thead>
-							    <tbody>
-							    <tr v-for="region in regions | orderBy 'name'">
-								    <td>
-									    {{region.name}}<br>
-									    <span v-if="region.callsign">
-	                                        <span class="label label-default" :style="'color: #FFF !important; background-color: ' + region.callsign" v-text="region.callsign|capitalize"></span>
-	                                    </span>
-									    <span class="small">{{ region.country.name | capitalize }}</span>
-								    </td>
-								    <td v-text="region.teams_count"></td>
-								    <td v-text="region.accommodations_count"></td>
-								    <td>
-									    <button class="btn btn-xs btn-default-hollow" type="button" @click="selectRegion(region)">
-										    Select
-									    </button>
-								    </td>
-							    </tr>
-							    </tbody>
-						    </table>
-					    </div>
+						<div class="panel-heading text-center"><h5>Choose a Region</h5></div>
+                        <ul class="list-group">
+                          <li class="list-group-item" v-for="region in regions | orderBy 'name'">
+                            <span class="badge" style="background-color: white; border: 1px solid black; color: black">
+                                {{region.teams_count}} Squads
+                            </span>
+                            <span class="badge" style="background-color: white; border: 1px solid black; color: black">
+                                {{region.accommodations_count}} Accommodations
+                            </span>
+                            <h5>{{region.name}}</h5>
+                            <span v-if="region.callsign">
+                                <span class="label label-default" :style="'color: #FFF !important; background-color: ' + region.callsign" v-text="region.callsign|capitalize"></span>
+                            </span>
+                            <span class="small">{{ region.country.name | capitalize }}</span>
+                            <button class="btn btn-xs btn-primary pull-right" type="button" @click="selectRegion(region)">
+                                Select
+                            </button>
+                          </li>
+                        </ul>
 					</div>
 				</template>
 				<template v-else>
 					<div class="form-group">
-						<button class="btn btn-default btn-sm" type="button" @click="selectRegionView = true;">Change Region</button>
+						<button class="btn btn-default-hollow btn-sm" type="button" @click="selectRegionView = true;">
+                            <i class="fa fa-chevron-left"></i> Change Region
+                        </button>
 						<hr class="divider">
 					</div>
 					<template v-if="accommodations.length">
 						<accordion :one-at-atime="true">
 							<panel :type="currentAccommodation && currentAccommodation.id === accommodation.id ? 'info' : ''" v-for="accommodation in accommodations">
 								<div slot="header" class="row">
-									<div class="col-xs-8">{{accommodation.name}}</div>
+									<div class="col-xs-6">
+                                        <strong>{{accommodation.name}}</strong>
+                                        <span v-if="accommodation.room_types.total === accommodation.rooms_count.total" class="badge text-uppercase" style="padding:3px 10px;font-size:10px;line-height:1.4;">Full</span>
+                                    </div>
 									<div class="col-xs-4 text-right">
-										<i class="fa fa-users"></i> {{accommodation.occupants_count}}
-										<span v-if="accommodation.occupancy_limit === accommodation.occupants_count" class="badge text-uppercase" style="padding:3px 10px;font-size:10px;line-height:1.4;">Full</span>
-										<button v-show="!currentAccommodation || (currentAccommodation && currentAccommodation.id !== accommodation.id)" class="btn btn-xs btn-default-hollow" @click="currentAccommodation = accommodation">
-											Select
-										</button>
+                                        {{accommodation.rooms_count.total}} <i class="fa fa-bed"></i>
+                                        &middot;
+										{{accommodation.occupants_count}} <i class="fa fa-users"></i>
 									</div>
+                                    <div class="col-xs-2 text-right">
+                                        <button v-show="!currentAccommodation || (currentAccommodation && currentAccommodation.id !== accommodation.id)" class="btn btn-xs btn-default-hollow" @click="currentAccommodation = accommodation">
+                                            Select
+                                        </button>
+                                    </div>
 								</div>
 								<div class="row">
 									<div class="col-sm-6">
@@ -218,7 +218,7 @@
 			</div>
 			<div class="col-sm-5">
 				<div class="col-xs-12">
-					<h4>Plans</h4>
+					<h4>Rooming Plans</h4>
 					<hr class="divider sm">
 					<form class="form-inline row">
 						<div class="form-group col-xs-8">
@@ -241,18 +241,22 @@
 								<div class="panel-group" id="plansAccordion" role="tablist" aria-multiselectable="true">
 									<div class="panel panel-default" v-for="plan in plans">
 										<div class="panel-heading">
-											<h3 class="panel-title" slot="header">
+											<div class="panel-title" slot="header">
 												<div class="row">
 													<div class="col-xs-9" role="button" data-toggle="collapse" data-parent="#plansAccordion" :href="'#planItem' + $index" aria-expanded="true" aria-controls="collapseOne">
-														<h4>{{plan.name}}</h4>
+														<h5>{{plan.name}}
+                                                            <small>
+                                                                {{ plan.rooms_count.total || 0 }} <i class="fa fa-bed"></i> &middot;
+                                                                {{ plan.occupants_count || 0 }} <i class="fa fa-users"></i>
+                                                            </small>
+                                                        </h5>
 														<label>Rooms</label><br />
 														<span v-for="(key, val) in plan.rooms_count">
-						                            <p style="line-height:1;font-size:11px;margin-bottom:2px;display:inline-block;"><span v-if="$index != 0"> &middot; </span>{{key | capitalize}}: <strong>{{val}}</strong></p>
+						                            <p class="small" style="line-height:1;margin-bottom:2px;display:inline-block;"><span v-if="$index != 0"> &middot; </span>{{key | capitalize}}: <strong>{{val}}</strong></p>
 						                        </span>
 
 													</div>
 													<div class="col-xs-3 text-right">
-														<i class="fa fa-users"></i> {{ plan.occupants_count || 0 }}
 														<button :disabled="!currentAccommodation" class="btn btn-xs btn-primary-hollow" type="button" @click="addPlanToAccommodation(plan, currentAccommodation)">
 															<i class="fa fa-plus"></i>
 														</button>
@@ -261,19 +265,19 @@
 														</a>
 													</div>
 												</div>
-											</h3>
+											</div>
 										</div>
 										<div :id="'planItem' + $index" class="panel-collapse collapse">
 
 											<div class="list-group">
 												<div class="list-group-item"  v-for="room in plan.rooms.data" >
-													<h5 class="list-group-item-heading">
-														{{ (room.label ? (room.label + ' - ' + room.type) : room.type) | capitalize }} <span v-if="getRoomLeader(room)">&middot; {{getRoomLeader(room).given_names}} {{getRoomLeader(room).surname}}</span>
+													<div class="list-group-item-heading">
+														<strong>{{ (room.label ? (room.label + ' - ' + room.type) : room.type) | capitalize }}</strong> <span v-if="getRoomLeader(room)"> ({{getRoomLeader(room).given_names}} {{getRoomLeader(room).surname}})</span>
 														<button :disabled="!currentAccommodation" class="btn btn-xs btn-primary-hollow pull-right" type="button" @click="addRoomToAccommodation(room, currentAccommodation)">
 															<i class="fa fa-plus"></i>
 														</button>
-														<span class="pull-right"><i class="fa fa-users"></i> {{ room.occupants_count || 0 }}</span>
-													</h5>
+														<span class="text-muted"> &middot; {{ room.occupants_count || 0 }} <i class="fa fa-users"></i></span>
+													</div>
 
 												</div>
 											</div>
