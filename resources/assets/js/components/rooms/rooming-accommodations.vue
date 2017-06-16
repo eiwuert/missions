@@ -16,7 +16,7 @@
 				<button class="btn btn-default btn-sm btn-block" type="button" @click="resetRegionFilter"><i class="fa fa-times"></i> Reset Region Filters</button>
 			</form>
 		</aside>
-		<aside :show.sync="showPlansFilters" placement="left" header="Filters" :width="375">
+		<aside :show.sync="showPlansFilters" placement="left" header="Plans Filters" :width="375">
 			<hr class="divider inv sm">
 			<form class="col-sm-12">
 				<div class="form-group">
@@ -30,6 +30,26 @@
 				<button class="btn btn-default btn-sm btn-block" type="button" @click="resetPlansFilter()"><i class="fa fa-times"></i> Reset Filters</button>
 			</form>
 		</aside>
+		<aside :show.sync="showRoomsFilters" placement="left" header="Rooms Filters" :width="375">
+			<hr class="divider inv sm">
+			<form class="col-sm-12">
+				<div class="form-group">
+					<label>Rooming Plans</label>
+					<v-select @keydown.enter.prevent=""  class="form-control" id="plansFilter" multiple :debounce="250" :on-search="getRoomingPlansFilter"
+					          :value.sync="roomsFilters.plans" :options="plansOptions" label="name"
+					          placeholder="Filter by Plans"></v-select>
+				</div>
+				<div class="form-group">
+					<label>Room Type</label>
+					<v-select @keydown.enter.prevent=""  class="form-control" id="typeFilter" :debounce="250" :on-search="getRoomTypes"
+					          :value.sync="roomsFilters.type" :options="roomTypes" label="name"
+					          placeholder="Filter by Type"></v-select>
+				</div>
+
+				<hr class="divider inv sm">
+				<button class="btn btn-default btn-sm btn-block" type="button" @click="resetRoomsFilter()"><i class="fa fa-times"></i> Reset Filters</button>
+			</form>
+		</aside>
 		<div class="row">
 			<div class="col-sm-7">
 				<template v-if="currentAccommodation">
@@ -40,7 +60,43 @@
 							</h3>
 						</div>
 						<div class="panel-body">
-							Panel body
+							<form class="form-inline row">
+								<div class="form-group col-xs-8">
+									<div class="input-group input-group-sm col-xs-12">
+										<input type="text" class="form-control" v-model="roomsSearch" debounce="300" placeholder="Search">
+										<span class="input-group-addon"><i class="fa fa-search"></i></span>
+									</div>
+									<hr class="divider sm inv">
+								</div><!-- end col -->
+								<div class="col-xs-4">
+									<button class="btn btn-default btn-sm btn-block" type="button" @click="showRoomsFilters=!showRoomsFilters">
+										<i class="fa fa-filter"></i>
+										Filters
+									</button>
+								</div>
+							</form>
+							<template v-if="currentAccommodationRooms.length">
+
+								<div class="list-group">
+									<div class="list-group-item"  v-for="room in currentAccommodationRooms" >
+										<h5 class="list-group-item-heading">
+											{{ (room.label ? (room.label + ' - ' + room.type) : room.type) | capitalize }} <span v-if="getRoomLeader(room)">&middot; {{getRoomLeader(room).given_names}} {{getRoomLeader(room).surname}}</span>
+											<span class="pull-right"><i class="fa fa-users"></i> {{ room.occupants_count || 0 }}</span>
+										</h5>
+
+									</div>
+								</div>
+								<div class="text-center">
+									<pagination :pagination.sync="currentAccommodationRoomsPagination"
+									            :callback="getCurrentAccommodationRooms"
+									            size="small">
+									</pagination>
+								</div>
+							</template>
+							<template v-else>
+								<hr class="divider inv">
+								<p class="text-center text-muted"><em>You can add plans and/rooms to this accommodation</em></p>
+							</template>
 						</div>
 					</div>
 				</template>
@@ -93,21 +149,6 @@
 						<hr class="divider">
 					</div>
 					<template v-if="accommodations.length">
-						<form class="form-inline row">
-							<div class="form-group col-xs-8">
-								<div class="input-group input-group-sm col-xs-12">
-									<input type="text" class="form-control" v-model="accommodationsSearch" debounce="300" placeholder="Search">
-									<span class="input-group-addon"><i class="fa fa-search"></i></span>
-								</div>
-								<hr class="divider sm inv">
-							</div><!-- end col -->
-							<div class="col-xs-4">
-								<button class="btn btn-default btn-sm" type="button" @click="showAccommodationsFilters=!showAccommodationsFilters">
-									<i class="fa fa-filter"></i>
-									Filters
-								</button>
-							</div>
-						</form>
 						<accordion :one-at-atime="true">
 							<panel :type="currentAccommodation && currentAccommodation.id === accommodation.id ? 'info' : ''" v-for="accommodation in accommodations">
 								<div slot="header" class="row">
@@ -158,6 +199,12 @@
 								</div>
 							</panel>
 						</accordion>
+						<div class="text-center">
+							<pagination :pagination.sync="accommodationsPagination"
+							            :callback="getAccommodations"
+							            size="small">
+							</pagination>
+						</div>
 					</template>
 					<template v-else>
 						<hr class="divider inv lg">
@@ -234,6 +281,12 @@
 
 									</div>
 								</div>
+
+								<div class="text-center">
+									<pagination :pagination.sync="plansPagination" :callback="getRoomingPlans"
+									            size="small">
+									</pagination>
+								</div>
 							</template>
 							<template v-else>
 								<hr class="divider inv">
@@ -269,10 +322,13 @@
                 showRegionsFilters: false,
                 showPlansFilters: false,
                 showAccommodationsFilters: false,
+                showRoomsFilters: false,
 
                 regionsSearch: '',
                 plansSearch: '',
                 accommodationsSearch: '',
+                currentAccommodationRoomsSearch: '',
+                roomsSearch: '',
 
                 regionsFilters: {
                     country: null
@@ -283,9 +339,17 @@
                     campaign: null,
                     group: null,
                 },
+                roomsFilters: {
+	                plans: [],
+                    accommodations: [],
+	                type: null
+                },
 
                 plans: [],
+                plansOptions: [],
                 groupsOptions: [],
+                roomTypes: [],
+                roomPlans: [],
                 plansPagination: { current_page: 1 },
                 regions: [],
                 regionsPagination: { current_page: 1 },
@@ -293,6 +357,8 @@
                 accommodationsPagination: { current_page: 1 },
                 currentRegion: null,
                 currentAccommodation: null,
+                currentAccommodationRooms: [],
+                currentAccommodationRoomsPagination: { current_page: 1 },
                 RegionsResource: this.$resource('campaigns{/campaign}/regions{/region}'),
                 AccommodationsResource: this.$resource('regions{/region}/accommodations{/accommodation}'),
                 PlansResource: this.$resource('rooming/plans{/plan}'),
@@ -305,6 +371,11 @@
                 else {
                     this.accommodations = [];
                     this.accommodationsPagination = { current_page: 1 };
+                }
+            },
+            currentAccommodation(val) {
+                if (val) {
+                    this.getCurrentAccommodationRooms();
                 }
             },
             regionsFilters: {
@@ -321,12 +392,27 @@
                 },
 	            deep: true
             },
+            roomsFilters: {
+                handler(){
+                    this.currentAccommodationRoomsPagination.current_page = 1;
+                    this.getCurrentAccommodationRooms();
+                },
+	            deep: true
+            },
             plansSearch(val) {
                 this.plansPagination.current_page = 1;
                 this.getRoomingPlans();
             },
+            roomsSearch(val) {
+                this.currentAccommodationRoomsPagination.current_page = 1;
+                this.getCurrentAccommodationRooms();
+            },
         },
         methods: {
+            resetRoomsFilter(){
+                this.roomsFilters.plans = [];
+                this.roomsFilters.type = null;
+            },
             resetRegionFilter(){
                 this.regionsFilters = {
                     country: null,
@@ -357,7 +443,7 @@
             getAccommodations(){
                 let params = {
                     region: this.currentRegion.id,
-
+					page: this.accommodationsPagination.current_page,
                 };
 
                 return this.AccommodationsResource.get(params).then(function (response) {
@@ -400,6 +486,22 @@
 
                 return this.PlansResource.get(params).then(function (response) {
                     this.pagination = response.body.meta.pagination;
+                    return this.plans = response.body.data;
+                })
+            },
+            getRoomingPlansFilter(){
+                let params = {
+                    include: 'rooms.occupants',
+                };
+                params = _.extend(params, {
+                    campaign: this.plansFilters.campaign ? this.plansFilters.campaign.id : null,
+                    group: this.plansFilters.group ? this.plansFilters.group.id : null,
+                    search: this.plansSearch,
+                    per_page: this.per_page,
+                });
+
+                return this.PlansResource.get(params).then(function (response) {
+                    this.pagination = response.body.meta.pagination;
                     this.plans = response.body.data;
                 })
             },
@@ -417,12 +519,56 @@
                     }
                 });
             },
+	        getAccommodationRooms(accommodation) {
+                let params = {
+                    accommodations: [accommodation.id],
+	                page: accommodation.roomsPagination.current_page,
+                };
+
+                return this.$http.get('rooming/rooms', { params: params }).then(function (response) {
+                    return {
+                        rooms: response.body.data,
+                        pagination: response.body.meta.pagination
+                    }
+                });
+	        },
+            getCurrentAccommodationRooms() {
+                let params = {
+                    accommodations: [this.currentAccommodation.id],
+	                page: this.currentAccommodationRoomsPagination.current_page,
+	                include: 'occupants',
+	                search: this.roomsSearch,
+                };
+
+                params = _.extend(params, {
+					plans: this.roomsFilters.plans.length ? _.pluck(this.roomsFilter.plans, 'id') : undefined,
+	                type: this.roomsFilters.type ? this.roomsFilters.type.id : undefined,
+                });
+
+                return this.$http.get('rooming/rooms', { params: params }).then(function (response) {
+                    this.currentAccommodationRooms = response.body.data;
+                    this.currentAccommodationRoomsPagination = response.body.meta.pagination;
+                });
+	        },
+            getRoomTypes(){
+                return this.$http.get('rooming/types')
+                    .then(function (response) {
+                            return this.roomTypes = response.body.data;
+                        },
+                        function (response) {
+                            console.log(response);
+                            return response.body.data;
+                        });
+            },
         },
         ready() {
             let promises = [];
             promises.push(this.getGroups());
+            promises.push(this.getRoomTypes());
             promises.push(this.getRegions());
-            promises.push(this.getRoomingPlans());
+            promises.push(this.getRoomingPlans().then(function (plans) {
+				this.plansOptions = plans;
+            }));
             Promise.all(promises).then(function (values) {
 
             });
