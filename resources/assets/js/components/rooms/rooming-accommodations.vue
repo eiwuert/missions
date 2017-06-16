@@ -16,6 +16,20 @@
 				<button class="btn btn-default btn-sm btn-block" type="button" @click="resetRegionFilter"><i class="fa fa-times"></i> Reset Region Filters</button>
 			</form>
 		</aside>
+		<aside :show.sync="showPlansFilters" placement="left" header="Filters" :width="375">
+			<hr class="divider inv sm">
+			<form class="col-sm-12">
+				<div class="form-group">
+					<label>Travel Group</label>
+					<v-select @keydown.enter.prevent=""  class="form-control" id="groupFilter" :debounce="250" :on-search="getGroups"
+					          :value.sync="plansFilters.group" :options="groupsOptions" label="name"
+					          placeholder="Filter by Group"></v-select>
+				</div>
+
+				<hr class="divider inv sm">
+				<button class="btn btn-default btn-sm btn-block" type="button" @click="resetPlansFilter()"><i class="fa fa-times"></i> Reset Filters</button>
+			</form>
+		</aside>
 		<div class="row">
 			<div class="col-sm-7">
 				<template v-if="currentAccommodation">
@@ -79,6 +93,21 @@
 						<hr class="divider">
 					</div>
 					<template v-if="accommodations.length">
+						<form class="form-inline row">
+							<div class="form-group col-xs-8">
+								<div class="input-group input-group-sm col-xs-12">
+									<input type="text" class="form-control" v-model="accommodationsSearch" debounce="300" placeholder="Search">
+									<span class="input-group-addon"><i class="fa fa-search"></i></span>
+								</div>
+								<hr class="divider sm inv">
+							</div><!-- end col -->
+							<div class="col-xs-4">
+								<button class="btn btn-default btn-sm" type="button" @click="showAccommodationsFilters=!showAccommodationsFilters">
+									<i class="fa fa-filter"></i>
+									Filters
+								</button>
+							</div>
+						</form>
 						<accordion :one-at-atime="true">
 							<panel :type="currentAccommodation && currentAccommodation.id === accommodation.id ? 'info' : ''" v-for="accommodation in accommodations">
 								<div slot="header" class="row">
@@ -152,6 +181,12 @@
 							</div>
 							<hr class="divider sm inv">
 						</div><!-- end col -->
+						<div class="col-xs-4">
+							<button class="btn btn-default btn-sm btn-block" type="button" @click="showPlansFilters=!showPlansFilters">
+								<i class="fa fa-filter"></i>
+								Filters
+							</button>
+						</div>
 					</form>
 					<div class="row">
 						<div class="col-sm-12">
@@ -232,6 +267,8 @@
             return {
                 selectRegionView: true,
                 showRegionsFilters: false,
+                showPlansFilters: false,
+                showAccommodationsFilters: false,
 
                 regionsSearch: '',
                 plansSearch: '',
@@ -248,6 +285,7 @@
                 },
 
                 plans: [],
+                groupsOptions: [],
                 plansPagination: { current_page: 1 },
                 regions: [],
                 regionsPagination: { current_page: 1 },
@@ -276,6 +314,13 @@
                 },
 	            deep: true
             },
+            plansFilters: {
+                handler(){
+                    this.plansPagination.current_page = 1;
+                    this.getRoomingPlans();
+                },
+	            deep: true
+            },
             plansSearch(val) {
                 this.plansPagination.current_page = 1;
                 this.getRoomingPlans();
@@ -285,6 +330,12 @@
             resetRegionFilter(){
                 this.regionsFilters = {
                     country: null,
+                };
+            },
+            resetPlansFilter(){
+                this.plansFilters = {
+                    campaign: null,
+                    group: null,
                 };
             },
 	        selectRegion(region) {
@@ -355,10 +406,21 @@
 	        getRoomLeader(room) {
                 return _.findWhere(room.occupants.data, { room_leader: true });
 	        },
+            getGroups(search, loading){
+                loading ? loading(true) : void 0;
+                let promise = this.$http.get('groups', { params: {search: search} }).then(function (response) {
+                    this.groupsOptions = response.body.data;
+                    if (loading) {
+                        loading(false);
+                    } else {
+                        return promise;
+                    }
+                });
+            },
         },
         ready() {
             let promises = [];
-//            promises.push(this.getCountries());
+            promises.push(this.getGroups());
             promises.push(this.getRegions());
             promises.push(this.getRoomingPlans());
             Promise.all(promises).then(function (values) {

@@ -850,7 +850,7 @@
             },
             roomHasLeader(room) {
                 return _.some(room.occupants, function (occupant) {
-	                return occupant.room_leader;
+	                return !!occupant.room_leader;
                 });
             },
             companionsPresentRoom(member, room) {
