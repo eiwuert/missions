@@ -147,6 +147,9 @@ import roomingAccommodations from './components/rooms/rooming-accommodations.vue
 import regionsAccommodations from './components/regions/regions-accommodations.vue';
 import restoreFund from './components/financials/funds/restore-fund.vue';
 
+// filter components
+import reservationsFilters from './components/filters/reservations-filters.vue';
+
 // jQuery
 window.$ = window.jQuery = require('jquery');
 // import slim from './vendors/slim.module.js';
@@ -967,6 +970,8 @@ new Vue({
         promotionals,
         transports,
         roomingAccommodations,
+
+        reservationsFilters,
     },
     http: {
         headers: {
