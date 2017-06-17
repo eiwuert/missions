@@ -2,19 +2,13 @@
 	<div>
 		<hr class="divider inv sm">
 		<form class="col-sm-12">
-			<div class="form-group">
+			<div class="form-group" v-if="!teams || !rooms">
 				<label>Groups</label>
 				<v-select @keydown.enter.prevent=""  class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
 				          :value.sync="groupsArr" :options="groupsOptions" label="name"
 				          placeholder="Filter Groups"></v-select>
 			</div>
-			<div class="form-group" v-if="isAdminRoute">
-				<label>Managing Users</label>
-				<v-select @keydown.enter.prevent=""  class="form-control" id="userFilter" multiple :debounce="250" :on-search="getUsers"
-				          :value.sync="usersArr" :options="usersOptions" label="name"
-				          placeholder="Filter Users"></v-select>
-			</div>
-			<div class="form-group" v-if="!tripId">
+			<div class="form-group" v-if="!tripSpecific && !teams && !rooms">
 				<label>Campaign</label>
 				<v-select @keydown.enter.prevent=""  class="form-control" id="campaignFilter" :debounce="250" :on-search="getCampaigns"
 				          :value.sync="campaignObj" :options="campaignOptions" label="name"
@@ -23,7 +17,7 @@
 
 			<div class="form-group">
 				<label>Trip Type</label>
-				<select  class="form-control input-sm" v-model="filterObject.type">
+				<select  class="form-control input-sm" v-model="filters.type">
 					<option value="">Any Type</option>
 					<option value="ministry">Ministry</option>
 					<option value="family">Family</option>
@@ -34,154 +28,191 @@
 				</select>
 			</div>
 
-			<div class="form-group">
-				<label>Gender</label>
-				<select class="form-control input-sm" v-model="filterObject.gender" style="width:100%;">
-					<option value="">Any Genders</option>
-					<option value="male">Male</option>
-					<option value="female">Female</option>
-				</select>
-			</div>
+			<template v-if="isAdminRoute || facilitator || teams || rooms">
 
-			<div class="form-group">
-				<label>Marital Status</label>
-				<select class="form-control input-sm" v-model="filterObject.status" style="width:100%;">
-					<option value="">Any Status</option>
-					<option value="single">Single</option>
-					<option value="married">Married</option>
-				</select>
-			</div>
+				<div class="form-group" v-if="isAdminRoute && teams">
+					<label>Travel Group</label>
+					<v-select @keydown.enter.prevent=""  class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
+					          :value.sync="groupsArr" :options="groupsOptions" label="name"
+					          placeholder="Filter Groups"></v-select>
+				</div>
 
-			<!-- Cost/Payments -->
-			<div class="form-group">
-				<label>Applied Cost</label>
-				<select class="form-control input-sm" v-model="filterObject.dueName" style="width:100%;">
-					<option value="">Any Cost</option>
-					<option v-for="option in dueOptions" v-bind:value="option">
-						{{ option }}
-					</option>
-				</select>
-			</div>
-			<div class="form-group" v-if="filterObject.dueName">
-				<label>Payment Status</label>
-				<select class="form-control input-sm" v-model="filterObject.dueStatus" style="width:100%;">
-					<option value="">Any Status</option>
-					<option value="overdue">Overdue</option>
-					<option value="late">Late</option>
-					<option value="extended">Extended</option>
-					<option value="paid">Paid</option>
-					<option value="pending">Pending</option>
-				</select>
-			</div>
-			<!-- end cost/payments -->
+				<div class="form-group" v-if="!isAdminRoute || teams || rooms">
+					<label v-text="teams ? 'Role' : 'Desired Role'"></label>
+					<v-select @keydown.enter.prevent="" class="form-control" id="roleFilter" :debounce="250" :on-search="getRolesSearch"
+					          :value.sync="roleObj" :options="UTILITIES.roles" label="name"
+					          placeholder="Filter Roles"></v-select>
 
-			<div class="form-group" v-if="isAdminRoute">
-				<label>Arrival Designation</label>
-				<select  class="form-control input-sm" v-model="filterObject.designation">
-					<option value="">Any</option>
-					<option value="eastern">Eastern</option>
-					<option value="western">Western</option>
-					<option value="international">International</option>
-					<option value="none">None</option>
-				</select>
-			</div>
+					<!--<select class="form-control input-sm" id="desiredRole" v-model="filters.role">
+						<option value="">Any Role</option>
+						<option v-for="role in UTILITIES.roles" :value="role.value">{{role.name}}</option>
+					</select>-->
+				</div>
 
-			<!-- Requirements -->
-			<div class="form-group">
-				<label>Requirements</label>
-				<select class="form-control input-sm" v-model="filterObject.requirementName" style="width:100%;">
-					<option value="">Any Requirement</option>
-					<option v-for="option in requirementOptions" v-bind:value="option">
-						{{ option }}
-					</option>
-				</select>
-			</div>
-			<div class="form-group" v-if="filterObject.requirementName">
-				<select class="form-control input-sm" v-model="filterObject.requirementStatus" style="width:100%;">
-					<option value="">Any Status</option>
-					<option value="incomplete">Incomplete</option>
-					<option value="reviewing">Reviewing</option>
-					<option value="attention">Attention</option>
-					<option value="complete">Complete</option>
-				</select>
-			</div>
-			<!-- end requirements -->
+				<div class="form-group" v-if="isAdminRoute">
+					<label>Managing Users</label>
+					<v-select @keydown.enter.prevent=""  class="form-control" id="userFilter" multiple :debounce="250" :on-search="getUsers"
+					          :value.sync="usersArr" :options="usersOptions" label="name"
+					          placeholder="Filter Users"></v-select>
+				</div>
 
-			<!-- Todos -->
-			<div class="form-group" v-if="isAdminRoute">
-				<label>Todos</label>
-				<select class="form-control input-sm" v-model="filterObject.todoName" style="width:100%;">
-					<option value="">Any Todo</option>
-					<option v-for="option in todoOptions" v-bind:value="option">
-						{{ option }}
-					</option>
-				</select>
-			</div>
-			<div class="form-group" v-if="filterObject.todoName">
-				<label class="radio-inline">
-					<input type="radio" name="companions" id="companions1" v-model="filterObject.todoStatus" :value="null"> Any
-				</label>
-				<label class="radio-inline">
-					<input type="radio" name="companions" id="companions2" v-model="filterObject.todoStatus" value="complete"> Complete
-				</label>
-				<label class="radio-inline">
-					<input type="radio" name="companions" id="companions3" v-model="filterObject.todoStatus" value="incomplete"> Incomplete
-				</label>
-			</div>
-			<!-- end todos -->
+				<div class="form-group">
+					<label>Gender</label>
+					<select class="form-control input-sm" v-model="filters.gender" style="width:100%;">
+						<option value="">Any Genders</option>
+						<option value="male">Male</option>
+						<option value="female">Female</option>
+					</select>
+				</div>
 
-			<!-- Trip Rep -->
-			<div class="form-group" v-if="isAdminRoute">
-				<label>Trip Rep</label>
-				<select class="form-control input-sm" v-model="filterObject.rep" style="width:100%;">
-					<option value="">Any Rep</option>
-					<option v-for="option in repOptions" v-bind:value="option.id">
-						{{ option.name | capitalize }}
-					</option>
-				</select>
-			</div>
-			<!-- end trip rep -->
+				<div class="form-group">
+					<label>Marital Status</label>
+					<select class="form-control input-sm" v-model="filters.status" style="width:100%;">
+						<option value="">Any Status</option>
+						<option value="single">Single</option>
+						<option value="married">Married</option>
+					</select>
+				</div>
 
-			<div class="form-group">
-				<label>Shirt Size</label>
-				<v-select @keydown.enter.prevent=""  class="form-control" id="ShirtSizeFilter" :value.sync="shirtSizeArr" multiple
-				          :options="shirtSizeOptions" label="name" placeholder="Shirt Sizes"></v-select>
-			</div>
-
-			<div class="form-group">
-				<div class="row">
-					<div class="col-xs-12">
-						<label>Age Range</label>
+				<!-- Cost/Payments -->
+				<template v-if="!teams && !rooms">
+					<div class="form-group">
+						<label>Applied Cost</label>
+						<select class="form-control input-sm" v-model="filters.dueName" style="width:100%;">
+							<option value="">Any Cost</option>
+							<option v-for="option in dueOptions" v-bind:value="option">
+								{{ option }}
+							</option>
+						</select>
 					</div>
-					<div class="col-xs-6">
-						<div class="input-group input-group-sm">
-							<span class="input-group-addon">Age Min</span>
-							<input type="number" class="form-control" number v-model="ageMin" min="0">
+					<div class="form-group" v-if="filters.dueName">
+						<label>Payment Status</label>
+						<select class="form-control input-sm" v-model="filters.dueStatus" style="width:100%;">
+							<option value="">Any Status</option>
+							<option value="overdue">Overdue</option>
+							<option value="late">Late</option>
+							<option value="extended">Extended</option>
+							<option value="paid">Paid</option>
+							<option value="pending">Pending</option>
+						</select>
+					</div>
+				</template>
+				<!-- end cost/payments -->
+
+				<div class="form-group" v-if="isAdminRoute || teams || rooms">
+					<label>Arrival Designation</label>
+					<select  class="form-control input-sm" v-model="filters.designation">
+						<option value="">Any</option>
+						<option value="eastern">Eastern</option>
+						<option value="western">Western</option>
+						<option value="international">International</option>
+						<option value="none">None</option>
+					</select>
+				</div>
+
+				<!-- Requirements -->
+				<template v-if="!teams && !rooms">
+					<div class="form-group">
+						<label>Requirements</label>
+						<select class="form-control input-sm" v-model="filters.requirementName" style="width:100%;">
+							<option value="">Any Requirement</option>
+							<option v-for="option in requirementOptions" v-bind:value="option">
+								{{ option }}
+							</option>
+						</select>
+					</div>
+					<div class="form-group" v-if="filters.requirementName">
+						<select class="form-control input-sm" v-model="filters.requirementStatus" style="width:100%;">
+							<option value="">Any Status</option>
+							<option value="incomplete">Incomplete</option>
+							<option value="reviewing">Reviewing</option>
+							<option value="attention">Attention</option>
+							<option value="complete">Complete</option>
+						</select>
+					</div>
+				</template>
+
+				<!-- end requirements -->
+
+				<!-- Todos -->
+				<template v-if="isAdminRoute && !teams && !rooms">
+					<div class="form-group">
+						<label>Todos</label>
+						<select class="form-control input-sm" v-model="filters.todoName" style="width:100%;">
+							<option value="">Any Todo</option>
+							<option v-for="option in todoOptions" v-bind:value="option">
+								{{ option }}
+							</option>
+						</select>
+					</div>
+					<div class="form-group" v-if="filters.todoName">
+						<label class="radio-inline">
+							<input type="radio" name="companions" id="companions1" v-model="filters.todoStatus" :value="null"> Any
+						</label>
+						<label class="radio-inline">
+							<input type="radio" name="companions" id="companions2" v-model="filters.todoStatus" value="complete"> Complete
+						</label>
+						<label class="radio-inline">
+							<input type="radio" name="companions" id="companions3" v-model="filters.todoStatus" value="incomplete"> Incomplete
+						</label>
+					</div>
+				</template>
+
+				<!-- end todos -->
+
+				<!-- Trip Rep -->
+				<div class="form-group" v-if="isAdminRoute">
+					<label>Trip Rep</label>
+					<select class="form-control input-sm" v-model="filters.rep" style="width:100%;">
+						<option value="">Any Rep</option>
+						<option v-for="option in repOptions" v-bind:value="option.id">
+							{{ option.name | capitalize }}
+						</option>
+					</select>
+				</div>
+				<!-- end trip rep -->
+
+				<div class="form-group" v-if="!teams && !rooms">
+					<label>Shirt Size</label>
+					<v-select @keydown.enter.prevent=""  class="form-control" id="ShirtSizeFilter" :value.sync="shirtSizeArr" multiple
+					          :options="shirtSizeOptions" label="name" placeholder="Shirt Sizes"></v-select>
+				</div>
+
+				<div class="form-group">
+					<div class="row">
+						<div class="col-xs-12">
+							<label>Age Range</label>
 						</div>
-					</div>
-					<div class="col-xs-6">
-						<div class="input-group input-group-sm">
-							<span class="input-group-addon">Max</span>
-							<input type="number" class="form-control" number v-model="ageMax" max="120">
+						<div class="col-xs-6">
+							<div class="input-group input-group-sm">
+								<span class="input-group-addon">Age Min</span>
+								<input type="number" class="form-control" number v-model="filters.age[0]" debounce="250" min="0">
+							</div>
+						</div>
+						<div class="col-xs-6">
+							<div class="input-group input-group-sm">
+								<span class="input-group-addon">Max</span>
+								<input type="number" class="form-control" number v-model="filters.age[1]" debounce="250" max="120">
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="form-group">
-				<label>Travel Companions</label>
-				<div>
-					<label class="radio-inline">
-						<input type="radio" name="companions" id="companions1" v-model="filterObject.hasCompanions" :value="null"> Any
-					</label>
-					<label class="radio-inline">
-						<input type="radio" name="companions" id="companions2" v-model="filterObject.hasCompanions" value="yes"> Yes
-					</label>
-					<label class="radio-inline">
-						<input type="radio" name="companions" id="companions3" v-model="filterObject.hasCompanions" value="no"> No
-					</label>
+				<div class="form-group">
+					<label>Travel Companions</label>
+					<div>
+						<label class="radio-inline">
+							<input type="radio" name="companions" id="companions1" v-model="filters.hasCompanions" :value="null"> Any
+						</label>
+						<label class="radio-inline">
+							<input type="radio" name="companions" id="companions2" v-model="filters.hasCompanions" value="yes"> Yes
+						</label>
+						<label class="radio-inline">
+							<input type="radio" name="companions" id="companions3" v-model="filters.hasCompanions" value="no"> No
+						</label>
+					</div>
 				</div>
-			</div>
+			</template>
 
 			<hr class="divider inv sm">
 			<button class="btn btn-default btn-sm btn-block" type="button" @click="resetCallback"><i class="fa fa-times"></i> Reset Filters</button>
@@ -192,33 +223,75 @@
 <script type="text/javascript">
 	import _ from 'underscore';
 	import vSelect from 'vue-select';
+	import utilities from '../utilities.mixin';
     export default{
         name: 'reservations-filters',
-	    components: {vSelect},
+        mixins: [utilities],
+        components: {vSelect},
 	    props: {
-			filterObject: {
+            // Main object that contains all filters used by the parent component for API calls
+		    // age[] default is used to avoid errors caused by (possibly) empty filter objects
+			filters: {
 			    type: Object,
-				required: true
+				required: true,
+				default: { age: [0, 120] }
 			},
+		    // Reset function used to restore defaults of variables that are needed for filters,
+		    // but are not in the filters object
 		    resetCallback: {
 			    type: Function,
 			    required: true
 		    },
-		    ageMin: {
-			    type: Number,
-			    default: 0
+		    // Pagination of the reservations list that the filters variable influences
+            pagination: {
+                type: Object,
+                required: true
+            },
+		    // This is references the function that would/should be run when filters variable is updated
+            callback: {
+                type: Function,
+                required: true
+            },
+		    // This variabe is the name of the localStorage property that holds the config of the parent component
+            storage: {
+                type: String,
+                required: false
+            },
+		    // This prop is used to ignore watching filters var for changes until the parent component is ready
+		    starter: {
+			    type: Boolean,
+			    required: false,
+			    default: false
 		    },
-		    ageMax: {
-			    type: Number,
-			    default: 120
+		    // We need to know if the user is a facilitator
+		    facilitator: {
+			    type: Boolean,
+			    default: false
 		    },
-	    },
+		    // There are some uses of reservations lists specific to trips
+		    tripSpecific: {
+			    type: Boolean,
+			    default: false
+		    },
+		    // We need to know if the user is managing teams
+		    teams: {
+			    type: Boolean,
+			    default: false
+		    },
+		    // We need to know if the user is managing rooming
+		    rooms: {
+			    type: Boolean,
+			    default: false
+		    },
+
+        },
         data(){
             return {
                 groupsArr: [],
                 usersArr: [],
                 shirtSizeArr: [],
                 campaignObj: null,
+                roleObj: null,
                 groupsOptions: [],
                 usersOptions: [],
                 campaignOptions: [],
@@ -237,20 +310,45 @@
             }
         },
 	    watch: {
-		    'campaignObj': function (val) {
-		        this.filterObject.campaign = val ? val.id : undefined;
+            'filters': {
+                handler: function (val) {
+                    if (this.starter)
+                        return;
+                    // console.log(val);
+                    this.pagination.current_page = 1;
+                    this.callback();
+                },
+                deep: true
+            },
+            'campaignObj': function (val) {
+		        this.filters.campaign = val ? val.id : null;
 		     },
 		    'shirtSizeArr': function (val) {
-		        this.filterObject.shirtSize = _.pluck(val, 'id') || undefined;
+		        this.filters.shirtSize = _.pluck(val, 'id') || [];
 		     },
 		    'groupsArr': function (val) {
-		        this.filterObject.groups = _.pluck(val, 'id') || undefined;
+		        this.filters.groups = _.pluck(val, 'id') || [];
 		     },
 		    'usersArr': function (val) {
-		        this.filterObject.user = _.pluck(val, 'id') || undefined;
+		        this.filters.user = _.pluck(val, 'id') || [];
 		     },
+            'roleObj': function (val) {
+                this.filters.role = val ? val.value : '';
+            },
+            'facilitator': function (val) {
+                if (val) {
+                    this.getRoles();
+                }
+            }
+
 	    },
         methods: {
+            propertyExists(property) {
+                // Instead of concerning the filters component about where it is
+	            // It is may be best to behave based on the filter object passed in
+	            // We can ho this be checking whether a property exists in it
+	            return this.filters.hasOwnProperty(property);
+            },
             getGroups(search, loading){
                 loading ? loading(true) : void 0;
                 let promise = this.$http.get('groups', { params: {search: search} }).then(function (response) {
@@ -321,18 +419,57 @@
             }
 
         },
+	    created(){
+
+        },
         ready(){
+            let self = this;
+            this.$root.$on('reservations-filters:reset', function () {
+                // the reset callback handles reset of the filters object
+	            // variables that influence the filters object need to be reset here
+                self.groupsArr = [];
+                self.usersArr = [];
+                self.campaignObj = null;
+            });
+
+            this.$root.$on('reservations-filters:preset', function () {
+
+            });
+
+            this.$root.$on('reservations-filters:update-storage', function () {
+                if (self.storage) {
+                    let config = window.localStorage[self.storage] ? JSON.parse(window.localStorage[self.storage]) : {};
+                    config = _.extend(config, {
+                        usersArr: this.usersArr,
+                        groupsArr: this.groupsArr,
+                        campaignObj: this.campaignObj,
+                    });
+                    window.localStorage[self.storage] = JSON.stringify(config);
+                } else {
+                    console.error('reservations-filters: Please set storage attribute.');
+                }
+            });
+
             let promises = [];
             // populate
             promises.push(this.getGroups());
             promises.push(this.getCampaigns());
-            promises.push(this.getCosts());
-            promises.push(this.getRequirements());
+
+            if (this.isAdminRoute || this.facilitator)
+                promises.push(this.getCosts());
+            if (this.isAdminRoute || this.facilitator)
+                promises.push(this.getRequirements());
             if (this.isAdminRoute)
                 promises.push(this.getTodos());
             if (this.isAdminRoute)
                 promises.push(this.getReps());
+            if (this.facilitator && !this.isAdminRoute || this.teams)
+                promises.push(this.getRoles());
 
+            Promise.all(promises).then(function () {
+                if (!self.starter)
+                    self.callback()
+            });
         }
     }
 </script>

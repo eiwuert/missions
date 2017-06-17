@@ -1,7 +1,7 @@
 <template>
     <div>
         <aside :show.sync="showFilters" placement="left" header="Filters" :width="375">
-            <reservations-filters :filter-object.sync="filters" :reset-callback="resetFilter" :age-min.sync="ageMin" :age-max.sync="ageMax"></reservations-filters>
+            <reservations-filters v-ref:filters :filters.sync="filters" :reset-callback="resetFilter" :pagination="pagination" :callback="getReservations" storage="DashboardReservations" :starter="startUp" :facilitator="isFacilitator" :trip-specific="!!tripId"></reservations-filters>
         </aside>
         <div class="row">
             <div class="col-xs-12 tour-step-find">
@@ -147,9 +147,10 @@
 <script type="text/javascript">
     import vSelect from "vue-select";
     import exportUtility from '../export-utility.vue';
+    import reservationsFilters from '../filters/reservations-filters.vue';
     export default{
         name: 'reservations-list',
-        components: {vSelect, exportUtility},
+        components: {vSelect, exportUtility, reservationsFilters},
         props: {
             userId: {
                 type: String,
@@ -178,30 +179,12 @@
                 includeManaging: false,
                 search: '',
                 showFilters: false,
-                rolesArr: [],
-                groupsArr: [],
-                groupOptions: [],
-                campaignObj: null,
-                campaignOptions: [],
-                requirementOptions: [],
-                dueOptions: [],
-                shirtSizeArr: [],
-                shirtSizeOptions: [
-                    {id: 'XS', name: 'Extra Small'},
-                    {id: 'S', name: 'Small'},
-                    {id: 'M', name: 'Medium'},
-                    {id: 'L', name: 'Large'},
-                    {id: 'XL', name: 'Extra Large'},
-                    {id: 'XXL', name: 'Extra Large X2'},
-                ],
-                ageMin: 0,
-                ageMax: 120,
                 per_page: 10,
                 perPageOptions: [5, 10, 25, 50, 100],
                 filters: {
                     type: '',
                     groups: [],
-                    campaign: '',
+                    campaign: null,
                     gender: '',
                     status: '',
                     shirtSize: [],
@@ -216,7 +199,8 @@
                     dueStatus: '',
                     rep: '',
                     sort: 'created_at',
-                    direction: 'desc'
+                    direction: 'desc',
+                    age: [0, 120],
 
                 },
                 sortOptions: [
@@ -284,18 +268,9 @@
                 handler: function (val) {
                     if (this.startUp)
                         return;
-                    // console.log(val);
                     this.updateConfig();
-                    this.pagination.current_page = 1;
-                    this.getReservations();
                 },
                 deep: true
-            },
-            'groupsArr': function (val) {
-                this.filters.groups = _.pluck(val, 'id')||'';
-            },
-            'campaignObj': function (val) {
-                this.filters.campaign = val ? val.id : '';
             },
             'search': function (val, oldVal) {
                 this.pagination.current_page = 1;
@@ -313,7 +288,7 @@
                     return;
                 this.updateConfig();
                 this.getReservations();
-            },
+            }
         },
         computed: {
             isFacilitator() {
@@ -380,52 +355,11 @@
                     this.pagination = response.body.meta.pagination;
                 });
             },
-            getGroups(search, loading){
-                loading ? loading(true) : void 0;
-                this.$http.get('groups', { params: { search: search} }).then(function (response) {
-                    this.groupOptions = response.body.data;
-                    loading ? loading(false) : void 0;
-                })
-            },
-            getCampaigns(search, loading){
-                loading ? loading(true) : void 0;
-                this.$http.get('campaigns', { params: { search: search} }).then(function (response) {
-                    this.campaignOptions = response.body.data;
-                    loading ? loading(false) : void 0;
-                })
-            },
-            getRequirements(){
-                this.$http.get('requirements', { params: {
-                    'type': 'trips',
-                    'per_page': 100,
-                    'unique': true
-                }}).then(function (response) {
-                    this.requirementOptions = _.uniq(_.pluck(response.body.data, 'name'));
-                });
-            },
-            getRoles(){
-                this.$http.get('utilities/team-roles').then(function (response) {
-                    _.each(response.body.roles, function (name, key) {
-                        this.rolesArr.push({ value: key, name: name});
-                    }.bind(this));
-                });
-            },
-            getCosts(){
-                this.$http.get('costs', { params: {
-                    'assignment': 'trips',
-                    'per_page': 100,
-                    'unique': true
-                }}).then(function (response) {
-                    this.dueOptions = _.uniq(_.pluck(response.body.data, 'name'));
-                });
-            },
             updateConfig(){
-                localStorage['DashboardReservations'] = JSON.stringify({
+                window.localStorage['DashboardReservations'] = JSON.stringify({
                     layout: this.layout,
                     includeManaging: this.includeManaging,
                     per_page: this.per_page,
-                    ageMin: this.ageMin,
-                    ageMax: this.ageMax,
                     filters: {
                         type: this.filters.type,
                         groups: this.filters.groups,
@@ -441,24 +375,25 @@
                         dueName: this.filters.dueName,
                         dueStatus: this.filters.dueStatus,
                         rep: this.filters.rep,
+                        age: this.filters.age,
                     }
                 });
+
+                this.$root.$emit('reservations-filters:update-storage');
+
 
             },
             resetFilter(){
                 this.orderByField = 'surname';
                 this.direction = 1;
                 this.search = null;
-                this.ageMin = 0;
-                this.ageMax = 120;
-                this.groupsArr = [];
-                this.usersArr = [];
-                this.campaignObj = null;
+                this.$root.$emit('reservations-filters:reset');
                 this.filters = {
                     type: '',
                     role: '',
                     groups: [],
-                    campaign: '',
+                    campaign: null,
+                    user: [],
                     gender: '',
                     status: '',
                     shirtSize: [],
@@ -469,17 +404,16 @@
                     requirementStatus: '',
                     rep: '',
                     dueName: '',
-                    dueStatus: ''
+                    dueStatus: '',
+                    age: [0, 120],
                 }
-
-
             },
 
         },
         ready(){
             // load view state
-            if (localStorage['DashboardReservations']) {
-                let config = JSON.parse(localStorage['DashboardReservations']);
+            if (window.localStorage['DashboardReservations']) {
+                let config = JSON.parse(window.localStorage['DashboardReservations']);
                 this.layout = config.layout;
                 this.per_page = config.per_page;
                 this.filters = config.filters;
@@ -512,9 +446,9 @@
                 }
 
                 if (this.isFacilitator) {
-                    this.getCosts();
-                    this.getRequirements();
-                    this.getRoles();
+                    // this.getCosts();
+                    //this.getRequirements();
+                    //this.getRoles();
                 }
 
             });

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<aside :show.sync="showFilters" placement="left" header="Filters" :width="375">
-			<reservations-filters :filter-object.sync="filters" :reset-callback="resetFilter" :age-min.sync="ageMin" :age-max.sync="ageMax"></reservations-filters>
+			<reservations-filters v-ref:filters :filters.sync="filters" :reset-callback="resetFilter" :pagination.sync="pagination" :callback="searchReservations" :storage="storageName" :trip-specific="!!tripId"></reservations-filters>
 		</aside>
 
 		<div class="row">
@@ -141,10 +141,10 @@
         <hr class="divider sm">
 		<div>
 			<label>Active Filters</label>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.tags.length" @click="filters.tags = []" >
+			<!--<span style="margin-right:2px;" class="label label-default" v-show="filters.tags.length" @click="filters.tags = []" >
 				Tags
 				<i class="fa fa-close"></i>
-			</span>
+			</span>-->
 			<span style="margin-right:2px;" class="label label-default" v-show="filters.user.length" @click="filters.user = []" >
 				Users
 				<i class="fa fa-close"></i>
@@ -153,7 +153,7 @@
 				Groups
 				<i class="fa fa-close"></i>
 			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.campaign != ''" @click="filters.campaign = ''" >
+			<span style="margin-right:2px;" class="label label-default" v-show="filters.campaign != null" @click="filters.campaign = null" >
 				Campaign
 				<i class="fa fa-close"></i>
 			</span>
@@ -383,21 +383,16 @@
 				activeFields: ['given_names', 'surname', 'group', 'campaign', 'type', 'percent_raised'],
 				maxActiveFields: 6,
 				maxActiveFieldsOptions: [2, 3, 4, 5, 6, 7, 8, 9],
-				groupsArr: [],
-				usersArr: [],
-				tagsArr: [],
-				tagsString: '',
-				shirtSizeArr: [],
-				ageMin: 0,
-				ageMax: 120,
+				//tagsArr: [],
+				//tagsString: '',
 
 				// filter vars
 				filters: {
                     type: '',
-					tags: [],
+					//tags: [],
 					user: [],
 					groups: [],
-					campaign: '',
+					campaign: null,
 					gender: '',
 					status: '',
 					shirtSize: [],
@@ -410,7 +405,8 @@
 					requirementStatus: '',
 					dueName: '',
 					dueStatus: '',
-					rep: ''
+					rep: '',
+					age: [0, 120],
 				},
 				showFilters: false,
 				exportOptions: {
@@ -469,7 +465,7 @@
 				}
 			},
 			'requirement': function () {
-				if (this.filters.requirementStatus)
+				if (this.filters.requirementName && this.filters.requirementStatus)
 					return this.filters.requirementName + '|' + this.filters.requirementStatus;
 
 				return this.filters.requirementName;
@@ -490,25 +486,11 @@
 		},
 		watch: {
 			// watch filters obj
-			'filters': {
-				handler: function (val) {
-					// console.log(val);
-					this.pagination.current_page = 1;
-					this.searchReservations();
-				},
-				deep: true
-			},
-			'tagsString': function (val) {
+			/*'tagsString': function (val) {
 				let tags = val.split(/[\s,]+/);
 				this.filters.tags = tags[0] !== '' ? tags : '';
 				this.searchReservations();
-			},
-			'ageMin': function (val) {
-				this.searchReservations();
-			},
-			'ageMax': function (val) {
-				this.searchReservations();
-			},
+			},*/
 			'direction': function (val) {
 				this.searchReservations();
 			},
@@ -555,19 +537,14 @@
 				console.dir(JSON.stringify(val))
 			},
 			updateConfig(){
-				localStorage[this.storageName] = JSON.stringify({
+                window.localStorage[this.storageName] = JSON.stringify({
 					activeFields: this.activeFields,
 					maxActiveFields: this.maxActiveFields,
 					per_page: this.per_page,
-					ageMin: this.ageMin,
-					ageMax: this.ageMax,
-					groupsArr: this.groupsArr,
-					tagsArr: this.tagsArr,
-					usersArr: this.usersArr,
-					campaignObj: this.campaignObj,
+                    //tagsArr: this.tagsArr,
 					filters: {
                         type: this.filters.type,
-                        tags: this.filters.tags,
+                        //tags: this.filters.tags,
 						user: this.filters.user,
 						groups: this.filters.groups,
 						campaign: this.filters.campaign,
@@ -583,8 +560,11 @@
 						dueName: this.filters.dueName,
 						dueStatus: this.filters.dueStatus,
 						rep: this.filters.rep,
+						age: this.filters.age
 					}
 				});
+
+				this.$root.$emit('reservations-filters:update-storage');
 
 			},
 			isActive(field){
@@ -602,17 +582,13 @@
 				this.orderByField = 'surname';
 				this.direction = 1;
 				this.search = null;
-				this.ageMin = 0;
-				this.ageMax = 120;
-				this.groupsArr = [];
-				this.usersArr = [];
-				this.campaignObj = null;
+				this.$root.$emit('reservations-filters:reset');
 				this.filters = {
                     type: '',
-					tags: [],
+					//tags: [],
 					user: [],
 					groups: [],
-					campaign: '',
+					campaign: null,
 					gender: '',
 					status: '',
 					shirtSize: [],
@@ -624,10 +600,9 @@
 					requirementStatus: '',
 					rep: '',
 					dueName: '',
-					dueStatus: ''
-				}
-
-
+					dueStatus: '',
+					age: [0, 120],
+				};
 			},
 			country(code){
 				return code;
@@ -660,7 +635,6 @@
 
 				$.extend(params, this.filters);
 				$.extend(params, {
-                    age: [this.ageMin, this.ageMax],
                     todo: this.todo,
                     requirement: this.requirement,
                     due: this.due,
@@ -688,8 +662,8 @@
 		},
 		ready(){
 			// load view state
-			if (localStorage[this.storageName]) {
-				let config = JSON.parse(localStorage[this.storageName]);
+			if (window.localStorage[this.storageName]) {
+				let config = JSON.parse(window.localStorage[this.storageName]);
 				this.activeFields = config.activeFields;
                 this.per_page = config.per_page;
                 this.maxActiveFields = config.maxActiveFields;
@@ -710,9 +684,8 @@
 				}.bind(this));
 			}
 
-//			Promise.all([]).then(function () {
+            if (!this.$refs.filters)
                 this.searchReservations();
-//            }.bind(this));
 
 			//Manually handle dropdown functionality to keep dropdown open until finished
 			$('.form-toggle-menu .dropdown-menu').on('click', function(event){
