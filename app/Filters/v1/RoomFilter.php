@@ -26,7 +26,7 @@ class RoomFilter extends Filter
 
     /**
      * Filter rooms assigned to plans.
-     * 
+     *
      * @param  array|integer $ids
      * @return query
      */
@@ -58,9 +58,14 @@ class RoomFilter extends Filter
         });
     }
 
+    public function notInUse()
+    {
+        return $this->->has('accommodations', '<', 1);
+    }
+
     /**
      * Filter by room type.
-     * 
+     *
      * @param  string $type
      * @return query
      */

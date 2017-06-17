@@ -33,4 +33,11 @@ class RoomingPlanFilter extends Filter
     {
         return $this->where('group_id', $id);
     }
+
+    public function notInUse()
+    {
+        return $this->whereHas('rooms', function ($room) {
+            return $room->has('accommodations', '<', 1);
+        });
+    }
 }

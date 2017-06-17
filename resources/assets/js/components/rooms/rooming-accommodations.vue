@@ -479,11 +479,12 @@
             },
             getRoomingPlans(){
                 let params = {
-                    include: 'rooms.occupants',
+                    include: 'rooms:notInUse,rooms.occupants',
                 };
                 params = _.extend(params, {
                     campaign: this.plansFilters.campaign ? this.plansFilters.campaign.id : null,
                     group: this.plansFilters.group ? this.plansFilters.group.id : null,
+                    notInUse: true,
                     search: this.plansSearch,
                     per_page: this.per_page,
                 });
