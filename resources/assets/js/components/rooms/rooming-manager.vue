@@ -809,14 +809,16 @@
                 });
             },
             addToRoom(occupant, leader, room) {
-                if (leader && this.roomHasLeader(room)) {
-                    this.$root.$emit('showInfo', 'This room already has a leader');
-                    return;
-                }
-
                 if (room.occupants_count >= room.type.data.rules.occupancy_limit) {
                     this.$root.$emit('showInfo', room.label +' currently has the max number of occupants');
                     return;
+                }
+
+                if (leader && this.roomHasLeader(room)) {
+                    //this.$root.$emit('showInfo', 'This room already has a leader');
+                    //return;
+                    let oldLeader = this.getRoomLeader(room);
+                    this.demoteToOccupant(oldLeader);
                 }
 
                 let data = {
