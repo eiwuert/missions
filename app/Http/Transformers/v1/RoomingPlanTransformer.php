@@ -2,11 +2,14 @@
 namespace App\Http\Transformers\v1;
 
 use App\RoomCount;
+use League\Fractal\ParamBag;
 use App\Models\v1\RoomingPlan;
 use League\Fractal\TransformerAbstract;
 
 class RoomingPlanTransformer extends TransformerAbstract
 {
+    private $validParams = ['notInUse'];
+
     /**
      * List of resources available to include
      *
@@ -44,9 +47,16 @@ class RoomingPlanTransformer extends TransformerAbstract
         return array_merge((new RoomCount($plan))->getRoomTypes(), $available);
     }
 
-    public function includeRooms(RoomingPlan $plan)
+    public function includeRooms(RoomingPlan $plan, ParamBag $params = null)
     {
-        $rooms = $plan->rooms;
+        if (! is_null($params) && $params->get('notInUse')) {
+            $this->validateParams($params);
+
+            $rooms = $plan->rooms()->filter(['notInUse' => true])->get();
+
+        } else {
+            $rooms = $plan->rooms;
+        }
 
         return $this->collection($rooms, new RoomTransformer);
     }
@@ -56,6 +66,18 @@ class RoomingPlanTransformer extends TransformerAbstract
         $group = $plan->group;
 
         return $this->item($group, new GroupTransformer);
+    }
+
+    private function validateParams($params)
+    {
+        $usedParams = array_keys(iterator_to_array($params));
+        if ($invalidParams = array_diff($usedParams, $this->validParams)) {
+            throw new \Exception(sprintf(
+                'Invalid param(s): "%s". Valid param(s): "%s"',
+                implode(',', $usedParams),
+                implode(',', $this->validParams)
+            ));
+        }
     }
 
 }

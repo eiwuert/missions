@@ -60,7 +60,7 @@ class RoomFilter extends Filter
 
     public function notInUse()
     {
-        return $this->->has('accommodations', '<', 1);
+        return $this->has('accommodations', '<', 1);
     }
 
     /**
