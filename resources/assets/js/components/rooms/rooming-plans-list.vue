@@ -132,6 +132,15 @@
 								<option :value="group" v-for="group in groupsOptions">{{group.name | capitalize}}</option>
 							</select>
 						</div>
+
+						<div class="row">
+							<div class="form-group" v-for="type in roomTypes">
+							<label :for="'settingsType-' + type.id" class="col-sm-6 control-label" v-text="type.name"></label>
+								<div class="col-sm-6">
+									<input type="number" number class="form-control" :id="'settingsType-' + type.id" v-model="selectedNewPlan.room_types_settings[type.id]" min="0">
+								</div>
+							</div>
+						</div>
 					</form>
 				</validator>
 			</div>
@@ -218,6 +227,7 @@
                     locked: false,
                     campaign_id: this.$parent.campaignId,
                     group_id: this.$parent.groupId,
+                    room_types_settings: {},
                 },
 	            selectedPlan: null,
                 selectedPlanSettings: null,
@@ -336,35 +346,29 @@
                 this.showPlanDeleteModal = true;
                 this.selectedDeletePlan = plan;
             },
-            updatePlanSettings() {
-                let promises = [];
-
-                // update name and short_desc properties
-	            promises.push(this.PlansResource.update({ plan: this.selectedPlan.id},
-		            { name: this.selectedPlanSettings.name, short_desc: this.selectedPlanSettings.short_desc}));
-
-                _.each(this.selectedPlanSettings, function (val, property) {
+	        handleRoomTypeSettings(plan, settings, promises) {
+                _.each(settings, function (val, property) {
                     let promise;
-					if (property.indexOf('_method') === -1 && !_.contains(['short_desc', 'name'], property)) {
-					    if (this.selectedPlanSettings[property + '_method'] === 'PUT') {
-					        if (val > 0) {
+                    if (property.indexOf('_method') === -1 && !_.contains(['short_desc', 'name'], property)) {
+                        if (settings[property + '_method'] === 'PUT') {
+                            if (val > 0) {
                                 promise = this.PlansResource.update({
-	                                plan: this.selectedPlan.id, path: 'types', pathId: property
+                                    plan: plan.id, path: 'types', pathId: property
                                 }, { available_rooms: val });
                             } else {
-					            // if val is 0 we should simply delete the room type setting
+                                // if val is 0 we should simply delete the room type setting
                                 promise = this.PlansResource.delete({
-                                    plan: this.selectedPlan.id, path: 'types', pathId: property
+                                    plan: plan.id, path: 'types', pathId: property
                                 });
-					        }
+                            }
 
-					    } else {
-					        // only create setting if val > 0
+                        } else {
+                            // only create setting if val > 0
                             if (val > 0)
-	                            promise = this.PlansResource.save({ plan: this.selectedPlan.id, path: 'types'}, {
-	                                room_type_id: property,
-	                                available_rooms: val
-	                            });
+                                promise = this.PlansResource.save({ plan: plan.id, path: 'types'}, {
+                                    room_type_id: property,
+                                    available_rooms: val
+                                });
                         }
                         if (promise) {
                             // we only need to catch errors here
@@ -373,9 +377,18 @@
                             });
                             promises.push(promise);
                         }
-					}
+                    }
 
                 }.bind(this));
+	        },
+            updatePlanSettings() {
+                let promises = [];
+
+                // update name and short_desc properties
+	            promises.push(this.PlansResource.update({ plan: this.selectedPlan.id},
+		            { name: this.selectedPlanSettings.name, short_desc: this.selectedPlanSettings.short_desc}));
+
+	            this.handleRoomTypeSettings(this.selectedPlan, this.selectedPlanSettings, promises);
 
                 Promise.all(promises).then(function () {
                     this.showPlanSettingsModal = false;
@@ -399,27 +412,48 @@
             },
             openNewPlanModal(){
                 this.showPlanModal = true;
-                this.selectedNewPlan = {
+                 let obj = {
                     name: '',
                     short_desc: '',
                     rooms: [],
                     locked: false,
                     campaign_id: this.$parent.campaignId,
                     group_id: this.$parent.groupId,
+                    room_types_settings:{}
+
                 };
+
+                // We need to loop through each room type to create an object to reference the plan types present
+                _.each(this.roomTypes, function (type) {
+                    // the settings will be traced by the type ids
+                    // then we will attempt to find the assignment in the current plan's settings (expecting a number) or set to 0
+                    obj.room_types_settings[type.id] = 0;
+                    // we are using method to track which room types need to be updated or posted
+                    obj.room_types_settings[type.id + '_method'] = 'POST';
+                }.bind(this));
+                this.selectedNewPlan = obj;
             },
             newPlan() {
                 if (this.isAdminRoute && _.isObject(this.selectedNewPlan.group)) {
                     this.selectedNewPlan.group_id = this.selectedNewPlan.group.id;
                 }
                 let data = _.extend({}, this.selectedNewPlan);
+                let room_types_settings = _.extend({}, data.room_types_settings);
+                delete data.room_types_settings;
                 delete data.group;
 
                 if (this.$PlanCreate.valid) {
                     return this.PlansResource.save(data, { include: 'group' }).then(function (response) {
                         let plan = response.body.data;
-                        this.plans.push(plan);
-                        this.showPlanModal = false;
+
+                        // update created plan with
+                        let promises = [];
+                        this.handleRoomTypeSettings(plan, room_types_settings, promises);
+                        Promise.all(promises).then(function () {
+                            this.getRoomingPlans();
+                            this.$root.$emit('showSuccess', data.name + ' created successfully');
+                            this.showPlanModal = false;
+                        }.bind(this));
                     }, function (response) {
                         console.log(response);
                         this.$root.$emit('showError', response.body.message);

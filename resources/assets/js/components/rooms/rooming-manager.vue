@@ -82,104 +82,7 @@
 			</form>
 		</aside>
 		<aside :show.sync="showReservationsFilters" placement="left" header="Reservation Filters" :width="375">
-			<hr class="divider inv sm">
-			<form class="col-sm-12">
-
-				<div class="form-group">
-					<label>Trip Type</label>
-					<select  class="form-control input-sm" v-model="reservationFilters.type">
-						<option value="">Any Type</option>
-						<option value="ministry">Ministry</option>
-						<option value="family">Family</option>
-						<option value="international">International</option>
-						<option value="media">Media</option>
-						<option value="medical">Medical</option>
-						<option value="leader">Leader</option>
-					</select>
-				</div>
-
-				<div class="form-group">
-					<label>Role</label>
-					<v-select @keydown.enter.prevent="" class="form-control" id="roleFilter" :debounce="250" :on-search="getRoles"
-					          :value.sync="reservationFilters.role" :options="UTILITIES.roles" label="name"
-					          placeholder="Filter Roles"></v-select>
-				</div>
-
-				<div class="form-group" v-if="isAdminRoute">
-					<label>Travel Group</label>
-					<v-select @keydown.enter.prevent=""  class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
-					          :value.sync="reservationFilters.groups" :options="groupsOptions" label="name"
-					          placeholder="Filter Groups"></v-select>
-				</div>
-
-				<div class="form-group">
-					<label>Gender</label>
-					<select class="form-control input-sm" v-model="reservationFilters.gender" style="width:100%;">
-						<option value="">Any Genders</option>
-						<option value="male">Male</option>
-						<option value="female">Female</option>
-					</select>
-				</div>
-
-				<div class="form-group">
-					<label>Marital Status</label>
-					<select class="form-control input-sm" v-model="reservationFilters.status" style="width:100%;">
-						<option value="">Any Status</option>
-						<option value="single">Single</option>
-						<option value="married">Married</option>
-					</select>
-				</div>
-
-				<div class="form-group">
-					<div class="row">
-						<div class="col-xs-12">
-							<label>Age Range</label>
-						</div>
-						<div class="col-xs-6">
-							<div class="input-group input-group-sm">
-								<span class="input-group-addon">Age Min</span>
-								<input type="number" class="form-control" number v-model="reservationsAgeMin" min="0">
-							</div>
-						</div>
-						<div class="col-xs-6">
-							<div class="input-group input-group-sm">
-								<span class="input-group-addon">Max</span>
-								<input type="number" class="form-control" number v-model="reservationsAgeMax" max="120">
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="form-group">
-					<label>Arrival Designation</label>
-					<select  class="form-control input-sm" v-model="reservationFilters.designation">
-						<option value="">Any</option>
-						<option value="eastern">Eastern</option>
-						<option value="western">Western</option>
-						<option value="international">International</option>
-						<option value="none">None</option>
-					</select>
-				</div>
-
-
-				<div class="form-group">
-					<label>Travel Companions</label>
-					<div>
-						<label class="radio-inline">
-							<input type="radio" name="companions" id="companions1" v-model="reservationFilters.hasCompanions" :value=""> Any
-						</label>
-						<label class="radio-inline">
-							<input type="radio" name="companions" id="companions2" v-model="reservationFilters.hasCompanions" value="yes"> Yes
-						</label>
-						<label class="radio-inline">
-							<input type="radio" name="companions" id="companions3" v-model="reservationFilters.hasCompanions" value="no"> No
-						</label>
-					</div>
-				</div>
-
-				<hr class="divider inv sm">
-				<button class="btn btn-default btn-sm btn-block" type="button" @click="resetReservationFilter()"><i class="fa fa-times"></i> Reset Filters</button>
-			</form>
+			<reservations-filters v-ref:filters :filters.sync="reservationFilters" :reset-callback="resetReservationFilter" :pagination="reservationsPagination" :callback="searchReservations" storage="" :starter="startUp" rooms></reservations-filters>
 		</aside>
 
 		<template v-if="currentPlan">
@@ -439,11 +342,11 @@
 								Status
 								<i class="fa fa-close"></i>
 							</span>
-							<span style="margin-right:2px;" class="label label-default" v-show="reservationsAgeMin != 0" @click="reservationsAgeMin = 0" >
+							<span style="margin-right:2px;" class="label label-default" v-show="reservationFilters.age[0] != 0" @click="reservationFilters.age[0] = 0" >
 								Min. Age
 								<i class="fa fa-close"></i>
 							</span>
-							<span style="margin-right:2px;" class="label label-default" v-show="reservationsAgeMax != 120" @click="reservationsAgeMax = 120" >
+							<span style="margin-right:2px;" class="label label-default" v-show="reservationFilters.age[1] != 120" @click="reservationFilters.age[1] = 120" >
 								Max. Age
 								<i class="fa fa-close"></i>
 							</span>
@@ -617,10 +520,11 @@
 <script type="text/javascript">
     import _ from 'underscore';
     import vSelect from 'vue-select';
+    import reservationsFilters from '../filters/reservations-filters.vue';
     import utilities from '../utilities.mixin';
     export default{
         name: 'rooming-manager',
-        components: {vSelect},
+        components: {vSelect, reservationsFilters},
 	    mixins: [utilities],
         props: {
             userId: {
@@ -675,10 +579,9 @@
                     status: '',
                     hasCompanions: null,
                     role: null,
-                    designation: ''
+                    designation: '',
+                    age: [0, 120],
                 },
-                reservationsAgeMin: 0,
-                reservationsAgeMax: 120,
                 groupsOptions:[],
 
 	            // modal vars
@@ -724,19 +627,13 @@
                 this.reservationsPagination.current_page = 1;
                 this.searchReservations();
             },
-            reservationFilters: {
+            /*reservationFilters: {
                 handler: function (val) {
                     this.reservationsPagination.current_page = 1;
                     this.searchReservations();
                 },
                 deep: true
-            },
-            reservationsAgeMin (val) {
-                this.searchReservations();
-            },
-            reservationsAgeMax (val) {
-                this.searchReservations();
-            },
+            },*/
 		    teamMembersSearch(val) {
                 this.getTeams();
             },
@@ -805,6 +702,7 @@
                 };
             },
             resetReservationFilter() {
+                this.$root.$emit('reservations-filters:reset');
                 this.reservationFilters = {
                     type: '',
                     groups: [],
@@ -911,14 +809,16 @@
                 });
             },
             addToRoom(occupant, leader, room) {
-                if (leader && this.roomHasLeader(room)) {
-                    this.$root.$emit('showInfo', 'This room already has a leader');
-                    return;
-                }
-
                 if (room.occupants_count >= room.type.data.rules.occupancy_limit) {
                     this.$root.$emit('showInfo', room.label +' currently has the max number of occupants');
                     return;
+                }
+
+                if (leader && this.roomHasLeader(room)) {
+                    //this.$root.$emit('showInfo', 'This room already has a leader');
+                    //return;
+                    let oldLeader = this.getRoomLeader(room);
+                    this.demoteToOccupant(oldLeader);
                 }
 
                 let data = {
