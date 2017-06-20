@@ -377,7 +377,7 @@
             searchReservations(){
                 let params = {
                     include: 'trip.campaign,trip.group,user,companions',
-                    search: this.reservationsFilters.search,
+                    search: this.reservationFilters.search,
                     page: this.reservationsPagination.current_page,
                     current: true,
                     //ignore: this.excludeReservationIds,
@@ -414,7 +414,7 @@
         },
         ready(){
 			this.getPassengers();
-//			this.searchReservations();
+			this.searchReservations();
         }
     }
 </script>
