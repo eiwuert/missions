@@ -39,4 +39,9 @@ class Activity extends Model
     {
         return $this->belongsTo(ActivityType::class, 'activity_type_id');
     }
+
+    public function notes()
+    {
+        return $this->morphMany(Note::class, 'noteable');
+    }
 }

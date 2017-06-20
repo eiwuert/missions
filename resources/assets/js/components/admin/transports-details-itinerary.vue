@@ -27,65 +27,120 @@
 
 		<!-- Activities List -->
 		<template v-if="activities.length">
-			<div class="row">
-				<div class="panel-group col-xs-12" id="activityAccordion" role="tablist" aria-multiselectable="false">
-					<div class="panel panel-default" v-for="activity in activities">
-						<div class="panel-heading" role="tab" :id="'activity_title' + $index">
-							<h3 class="panel-title">
-								<a role="button" data-toggle="collapse" data-parent="#activityAccordion" :href="'#activity_' + $index" aria-expanded="true" :aria-controls="'activity' + $index">
-									{{activity.name | capitalize}} <span class="label label-default" v-text="activity.type.name|capitalize"></span>
-									<span class="small text-muted"><i class="fa fa-clock-o"></i> {{activity.occurred_at|moment 'lll'}}</span>
-								</a>
-								<a @click="confirmDeleteActivity(activity)" class="btn btn-xs btn-default-hollow pull-right">
-									<i class="fa fa-trash"></i>
-								</a>
-								<a @click="editActivity(activity)" class="btn btn-xs btn-default-hollow pull-right">
-									<i class="fa fa-cog"></i>
-								</a>
 
-								<p class="small" v-text="activity.description"></p>
-							</h3>
-						</div>
-						<div :id="'activity_' + $index" class="panel-collapse collapse" role="tabpanel" aria-labelledby="'activity_title' + $index">
-							<div class="panel-body">
-								<div class="row">
-									<div class="col-sm-6">
-										<h4>Hubs</h4>
-									</div>
-									<div class="col-sm-6 text-right">
-										<button class="btn btn-sm btn-primary" type="button" @click="newHub">Add Hub</button>
-									</div>
+			<div class="container">
+				<div class="row">
+					<div class="timeline-centered">
+
+						<article class="timeline-entry" v-for="activity in activities">
+
+							<div class="timeline-entry-inner">
+								<time class="timeline-time" datetime="{{ activity.occurred_at }}">
+									<span>{{ activity.occurred_at | moment 'h:mm A zz' }}</span>
+									<span>{{ activity.occurred_at | moment 'ddd, ll' }}</span>
+								</time>
+
+								<div class="timeline-icon bg-success" v-if="activity.type.name == 'departure'">
+									<i class="fa fa-arrow-right"></i>
 								</div>
 
-								<hr class="divider sm">
-								<div class="list-group">
-									<div class="list-group-item" v-for="hub in activity.hubs.data">
-										<h4 class="list-group-item-heading">
-											{{hub.name | capitalize}} <span v-if="hub.call_sign">({{hub.call_sign}})</span>
+								<div class="timeline-icon bg-warning" v-if="activity.type.name == 'connection'">
+									<i class="fa fa-arrow-arrows"></i>
+								</div>
 
-											<a @click="confirmDeleteHub(hub)" class="btn btn-xs btn-default-hollow pull-right">
-												<i class="fa fa-trash"></i>
+								<div class="timeline-icon bg-danger" v-if="activity.type.name == 'arrival'">
+									<i class="fa fa-arrow-left"></i>
+								</div>
+
+								<div class="timeline-label">
+									<h2>
+										<a href="#">{{ activity.name | capitalize }}</a>
+										<span class="label label-default" v-text="activity.type.name|capitalize"></span>
+										<br />
+										<small><i class="fa fa-clock-o"></i> {{ activity.occurred_at|moment 'dddd, MMMM D, YYYY zz' }}</small>
+									</h2>
+
+									<p>{{ activity.description }}</p>
+
+									<hr class="divider">
+
+									<p class="text-right">
+										<a @click="confirmDeleteActivity(activity)" class="btn btn-xs btn-default-hollow pull-right">
+											<i class="fa fa-trash"></i> Delete
+										</a>
+										<a @click="editActivity(activity)" class="btn btn-xs btn-default-hollow pull-right">
+											<i class="fa fa-pencil"></i> Edit
+										</a>
+									<p>
+
+									<ul class="nav nav-tabs" role="tablist">
+										<li role="presentation" class="active">
+											<a href="#hubs" aria-controls="hubs" role="tab" data-toggle="tab">
+												<i class="fa fa-map-marker"></i> Hubs
 											</a>
-											<a @click="editHub(hub)" class="btn btn-xs btn-default-hollow pull-right">
-												<i class="fa fa-cog"></i>
+										</li>
+										<li role="presentation">
+											<a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">
+												<i class="fa fa-sticky-note-o"></i> Notes
 											</a>
-										</h4>
-										<p class="list-group-item-text">
-											{{hub.address}}
-											{{hub.city}} {{hub.state}} {{hub.zip}}
-											{{hub.country_code | uppercase}}
-										</p>
+										</li>
+									</ul>
+
+									<!-- Tab panes -->
+									<div class="tab-content">
+										<div role="tabpanel" class="tab-pane active" id="hubs">
+											<div class="text-right">
+												<button class="btn btn-sm btn-primary" type="button" @click="newHub">Add Hub</button>
+											</div>
+											<hr class="divider inv">
+											<div class="list-group">
+												<div class="list-group-item" v-for="hub in activity.hubs.data">
+													<h5 class="list-group-item-heading">
+														{{hub.name | capitalize}} <span v-if="hub.call_sign">({{hub.call_sign}})</span>
+
+														<a @click="confirmDeleteHub(hub)" class="btn btn-xs btn-default-hollow pull-right">
+															<i class="fa fa-trash"></i> Delete
+														</a>
+
+														<a @click="editHub(hub)" class="btn btn-xs btn-default-hollow pull-right">
+															<i class="fa fa-pencil"></i> Edit
+														</a>
+													</h5>
+													<p class="list-group-item-text">
+														{{hub.address}}
+														{{hub.city}} {{hub.state}} {{hub.zip}}
+														{{hub.country_code | uppercase}}
+													</p>
+												</div>
+											</div>
+										</div>
+
+										<div role="tabpanel" class="tab-pane" id="notes">
+										</div>
 									</div>
+
 								</div>
 							</div>
-						</div>
+
+						</article>
+						<article class="timeline-entry begin">
+
+							<div class="timeline-entry-inner">
+
+								<div class="timeline-icon">
+									<i class="fa fa-ban"></i>
+								</div>
+
+							</div>
+
+						</article>
+
 					</div>
 				</div>
-
+			</div>
 				<div class="col-xs-12 text-center">
 					<pagination :pagination.sync="activitiesPagination" :callback="getActivities"></pagination>
 				</div>
-			</div>
 		</template>
 		<!-- Activities List Empty State -->
 		<template v-else>
@@ -301,3 +356,292 @@
         }
     }
 </script>
+<style scoped>
+
+img
+{
+	vertical-align: middle;
+}
+.img-responsive
+{
+	display: block;
+	height: auto;
+	max-width: 100%;
+}
+.img-rounded
+{
+	border-radius: 3px;
+}
+.img-thumbnail
+{
+	background-color: #fff;
+	border: 1px solid #ededf0;
+	border-radius: 3px;
+	display: inline-block;
+	height: auto;
+	line-height: 1.428571429;
+	max-width: 100%;
+	moz-transition: all .2s ease-in-out;
+	o-transition: all .2s ease-in-out;
+	padding: 2px;
+	transition: all .2s ease-in-out;
+	webkit-transition: all .2s ease-in-out;
+}
+.img-circle
+{
+	border-radius: 50%;
+}
+.timeline-centered {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+    .timeline-centered:before, .timeline-centered:after {
+        content: " ";
+        display: table;
+    }
+
+    .timeline-centered:after {
+        clear: both;
+    }
+
+    .timeline-centered:before, .timeline-centered:after {
+        content: " ";
+        display: table;
+    }
+
+    .timeline-centered:after {
+        clear: both;
+    }
+
+    .timeline-centered:before {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 4px;
+        background: #666;
+        left: 20%;
+        top: 20px;
+        bottom: 20px;
+        margin-left: -4px;
+    }
+
+    .timeline-centered .timeline-entry {
+        position: relative;
+        width: 80%;
+        float: right;
+        margin-bottom: 70px;
+        clear: both;
+    }
+
+        .timeline-centered .timeline-entry:before, .timeline-centered .timeline-entry:after {
+            content: " ";
+            display: table;
+        }
+
+        .timeline-centered .timeline-entry:after {
+            clear: both;
+        }
+
+        .timeline-centered .timeline-entry:before, .timeline-centered .timeline-entry:after {
+            content: " ";
+            display: table;
+        }
+
+        .timeline-centered .timeline-entry:after {
+            clear: both;
+        }
+
+        .timeline-centered .timeline-entry.begin {
+            margin-bottom: 0;
+        }
+
+        .timeline-centered .timeline-entry.left-aligned {
+            float: left;
+        }
+
+            .timeline-centered .timeline-entry.left-aligned .timeline-entry-inner {
+                margin-left: 0;
+                margin-right: -18px;
+            }
+
+                .timeline-centered .timeline-entry.left-aligned .timeline-entry-inner .timeline-time {
+                    left: auto;
+                    right: -100px;
+                    text-align: left;
+                }
+
+                .timeline-centered .timeline-entry.left-aligned .timeline-entry-inner .timeline-icon {
+                    float: right;
+                }
+
+                .timeline-centered .timeline-entry.left-aligned .timeline-entry-inner .timeline-label {
+                    margin-left: 0;
+                    margin-right: 70px;
+                }
+
+                    .timeline-centered .timeline-entry.left-aligned .timeline-entry-inner .timeline-label:after {
+                        left: auto;
+                        right: 0;
+                        margin-left: 0;
+                        margin-right: -9px;
+                        -moz-transform: rotate(180deg);
+                        -o-transform: rotate(180deg);
+                        -webkit-transform: rotate(180deg);
+                        -ms-transform: rotate(180deg);
+                        transform: rotate(180deg);
+                    }
+
+        .timeline-centered .timeline-entry .timeline-entry-inner {
+            position: relative;
+            margin-left: -22px;
+        }
+
+            .timeline-centered .timeline-entry .timeline-entry-inner:before, .timeline-centered .timeline-entry .timeline-entry-inner:after {
+                content: " ";
+                display: table;
+            }
+
+            .timeline-centered .timeline-entry .timeline-entry-inner:after {
+                clear: both;
+            }
+
+            .timeline-centered .timeline-entry .timeline-entry-inner:before, .timeline-centered .timeline-entry .timeline-entry-inner:after {
+                content: " ";
+                display: table;
+            }
+
+            .timeline-centered .timeline-entry .timeline-entry-inner:after {
+                clear: both;
+            }
+
+            .timeline-centered .timeline-entry .timeline-entry-inner .timeline-time {
+                position: absolute;
+                left: -100px;
+                text-align: right;
+                padding: 10px;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+            }
+
+                .timeline-centered .timeline-entry .timeline-entry-inner .timeline-time > span {
+                    display: block;
+                }
+
+                    .timeline-centered .timeline-entry .timeline-entry-inner .timeline-time > span:first-child {
+                        font-size: 15px;
+                        font-weight: bold;
+                    }
+
+                    .timeline-centered .timeline-entry .timeline-entry-inner .timeline-time > span:last-child {
+                        font-size: 12px;
+                    }
+
+            .timeline-centered .timeline-entry .timeline-entry-inner .timeline-icon {
+                background: #fff;
+                color: #737881;
+                display: block;
+                width: 40px;
+                height: 40px;
+                -webkit-background-clip: padding-box;
+                -moz-background-clip: padding;
+                background-clip: padding-box;
+                -webkit-border-radius: 20px;
+                -moz-border-radius: 20px;
+                border-radius: 20px;
+                text-align: center;
+                -moz-box-shadow: 0 0 0 5px #f5f5f6;
+                -webkit-box-shadow: 0 0 0 5px #f5f5f6;
+                box-shadow: 0 0 0 5px #f5f5f6;
+                line-height: 40px;
+                font-size: 15px;
+                float: left;
+            }
+
+                .timeline-centered .timeline-entry .timeline-entry-inner .timeline-icon.bg-primary {
+                    background-color: #303641;
+                    color: #fff;
+                }
+
+                .timeline-centered .timeline-entry .timeline-entry-inner .timeline-icon.bg-secondary {
+                    background-color: #ee4749;
+                    color: #fff;
+                }
+
+                .timeline-centered .timeline-entry .timeline-entry-inner .timeline-icon.bg-success {
+                    background-color: #00a651;
+                    color: #fff;
+                }
+
+                .timeline-centered .timeline-entry .timeline-entry-inner .timeline-icon.bg-info {
+                    background-color: #21a9e1;
+                    color: #fff;
+                }
+
+                .timeline-centered .timeline-entry .timeline-entry-inner .timeline-icon.bg-warning {
+                    background-color: #fad839;
+                    color: #fff;
+                }
+
+                .timeline-centered .timeline-entry .timeline-entry-inner .timeline-icon.bg-danger {
+                    background-color: #cc2424;
+                    color: #fff;
+                }
+
+            .timeline-centered .timeline-entry .timeline-entry-inner .timeline-label {
+                position: relative;
+                background: #fff;
+                padding: 1.7em;
+                margin-left: 70px;
+                -webkit-background-clip: padding-box;
+                -moz-background-clip: padding;
+                background-clip: padding-box;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                border-radius: 3px;
+            }
+
+                .timeline-centered .timeline-entry .timeline-entry-inner .timeline-label:after {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    border-style: solid;
+                    border-width: 9px 9px 9px 0;
+                    border-color: transparent #f5f5f6 transparent transparent;
+                    left: 0;
+                    top: 10px;
+                    margin-left: -9px;
+                }
+
+                .timeline-centered .timeline-entry .timeline-entry-inner .timeline-label h2, .timeline-centered .timeline-entry .timeline-entry-inner .timeline-label p {
+                    color: #737881;
+                    font-family: "Noto Sans",sans-serif;
+                    font-size: 12px;
+                    margin: 0;
+                    line-height: 1.428571429;
+                }
+
+                    .timeline-centered .timeline-entry .timeline-entry-inner .timeline-label p + p {
+                        margin-top: 15px;
+                    }
+
+                .timeline-centered .timeline-entry .timeline-entry-inner .timeline-label h2 {
+                    font-size: 16px;
+                    margin-bottom: 10px;
+                }
+
+                    .timeline-centered .timeline-entry .timeline-entry-inner .timeline-label h2 a {
+                        color: #303641;
+                    }
+
+                    .timeline-centered .timeline-entry .timeline-entry-inner .timeline-label h2 span {
+                        -webkit-opacity: .6;
+                        -moz-opacity: .6;
+                        opacity: .6;
+                        -ms-filter: alpha(opacity=60);
+                        filter: alpha(opacity=60);
+                    }
+</style>
