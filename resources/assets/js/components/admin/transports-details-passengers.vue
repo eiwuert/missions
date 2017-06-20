@@ -413,8 +413,8 @@
             },
         },
         ready(){
-			this.getPassengers();
-			this.searchReservations();
+//			this.getPassengers();
+//			this.searchReservations();
         }
     }
 </script>
