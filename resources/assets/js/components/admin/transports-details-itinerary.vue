@@ -132,7 +132,7 @@
         name: 'transports-details-itinerary',
         mixins: [/*errorHandler,*/ utilities],
 	    components: {vSelect, travelActivity, travelHub},
-	    props: ['transport'],
+	    props: ['transport', 'campaignId'],
         data(){
             return {
                 showActivityFilters: false,
@@ -165,11 +165,16 @@
             },
 		    hubModal(val){
                 if (!val)
-                    this.selectedHub = null;
+                    this.$nextTick(function () {
+                        this.selectedHub = null;
+                    });
+
 		    },
 		    activityModal(val){
                 if (!val)
-                    this.selectedActivity = null;
+                    this.$nextTick(function () {
+                        this.selectedActivity = null;
+                    });
 		    },
 	    },
         methods: {
@@ -229,11 +234,12 @@
 	            this.showActivityDeleteModal = true;
 	        },
 	        saveHub(){
+                let data = _.extend({}, this.selectedHub);
+                let promise;
+
                 // trigger validation styles
                 this.$broadcast('validate-itinerary');
 
-	            let data = _.extend({}, this.selectedHub);
-				let promise;
 	            if (data.id) {
 	                promise = this.HubResource.update({ hub: data.id}, data).then(function (response) {
                         this.editMode = false;
@@ -252,11 +258,12 @@
                 });
 	        },
 	        saveActivity(){
+                let data = _.extend({}, this.selectedActivity);
+                let promise;
+
                 // trigger validation styles
                 this.$broadcast('validate-itinerary');
 
-                let data = _.extend({}, this.selectedActivity);
-				let promise;
                 if (data.id) {
                     promise = this.ActivityResource.update({ activity: data.id}, data).then(function (response) {
                         this.editMode = false;
