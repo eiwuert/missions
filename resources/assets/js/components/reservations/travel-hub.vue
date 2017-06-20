@@ -88,7 +88,7 @@
 						<div v-if="isAdminRoute" class="form-group" v-error-handler="{ value: hub.call_sign, client: 'callsign' }">
 							<label for="">CallSign</label>
 							<template v-if="editMode">
-								<input type="text" class="form-control" v-model="hub.call_sign" v-validate:callsign="['required']" v-if="editMode">
+								<input type="text" class="form-control" v-model="hub.call_sign" v-validate:callsign="['required']">
 							</template>
 							<p v-else>{{ hub.call_sign | uppercase }}</p>
 						</div>
@@ -262,31 +262,40 @@
             let self = this;
 
             let activityType = _.findWhere(this.activityTypes, { id: this.activityType});
-            switch (activityType.name) {
-                case 'arrival':
-                    this.LABELS = {
-                        flight: 'Arriving at Airport',
-                        vehicle: 'Arriving at',
-                        bus: 'Bus Stop Location',
-                        train: 'Arriving at Station',
-                    };
-                    break;
-                case 'departure':
-                    this.LABELS = {
-                        flight: 'Depart from Airport',
-                        vehicle: 'Departing from',
-                        bus: 'Bus Stop Location',
-                        train: 'Depart from Station',
-                    };
-                    break;
-                case 'connection':
-                    this.LABELS = {
-                        flight: 'Making Connection at Airport',
-                        vehicle: 'Connection Location',
-                        bus: 'Connecting Bus Stop',
-                        train: 'Making Connection at Station',
-                    };
-                    break;
+            if (activityType) {
+                switch (activityType.name) {
+                    case 'arrival':
+                        this.LABELS = {
+                            flight: 'Arriving at Airport',
+                            vehicle: 'Arriving at',
+                            bus: 'Bus Stop Location',
+                            train: 'Arriving at Station',
+                        };
+                        break;
+                    case 'departure':
+                        this.LABELS = {
+                            flight: 'Depart from Airport',
+                            vehicle: 'Departing from',
+                            bus: 'Bus Stop Location',
+                            train: 'Depart from Station',
+                        };
+                        break;
+                    case 'connection':
+                        this.LABELS = {
+                            flight: 'Making Connection at Airport',
+                            vehicle: 'Connection Location',
+                            bus: 'Connecting Bus Stop',
+                            train: 'Making Connection at Station',
+                        };
+                        break;
+                }
+            } else {
+                this.LABELS = {
+                    flight: 'Airport',
+                    vehicle: 'Vehicle Location',
+                    bus: 'Bus Stop Location',
+                    train: 'Station Location',
+                };
             }
 
             let promises = [];

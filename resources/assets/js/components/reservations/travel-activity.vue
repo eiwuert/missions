@@ -105,16 +105,20 @@
         },
         ready(){
 	        let activityType = _.findWhere(this.activityTypes, { id: this.activityType});
-	        switch (activityType.name) {
-		        case 'arrival':
-		            this.LABELS.dateTime = 'Arriving at Date & Time';
-		            break;
-		        case 'departure':
-                    this.LABELS.dateTime = 'Departing at Date & Time';
-                    break;
-		        case 'connection':
-                    this.LABELS.dateTime = 'Connection Departs at Date & Time';
-                    break;
+	        if (activityType) {
+                switch (activityType.name) {
+                    case 'arrival':
+                        this.LABELS.dateTime = 'Arriving at Date & Time';
+                        break;
+                    case 'departure':
+                        this.LABELS.dateTime = 'Departing at Date & Time';
+                        break;
+                    case 'connection':
+                        this.LABELS.dateTime = 'Connection Departs at Date & Time';
+                        break;
+                }
+            } else {
+                this.LABELS.dateTime = 'Date & Time';
 	        }
         }
     }

@@ -25,15 +25,6 @@
 		</form>
 		<hr class="divider">
 
-		<!-- Create Activity-->
-		<div class="panel panel-default" v-if="activityModal">
-			<div class="panel-heading">
-				<h3 class="panel-title">Create Activity</h3>
-			</div>
-			<div class="panel-body">
-				<travel-activity :activity="selectedActivity" :activity-types="activityTypes" transport-domestic></travel-activity>
-			</div>
-		</div>
 		<!-- Activities List -->
 		<template v-if="activities.length">
 			<div class="row">
@@ -102,9 +93,14 @@
 			<p class="text-center text-muted"><em>No activities</em></p>
 		</template>
 
+		<modal :title="editMode?'Edit Activity':'Create Activity'" :ok-text="editMode?'Update':'Create'" :callback="saveActivity" :show.sync="activityModal">
+			<div slot="modal-body" class="modal-body" v-if="selectedActivity">
+				<travel-activity v-ref:activity :activity="selectedActivity" :activity-types="activityTypes" transport-domestic></travel-activity>
+			</div>
+		</modal>
 		<modal :title="editMode?'Edit Hub':'Create Hub'" :ok-text="editMode?'Update':'Create'" :callback="saveHub" :show.sync="hubModal">
 			<div slot="modal-body" class="modal-body" v-if="selectedHub">
-				<travel-hub :hub.sync="selectedHub" :activity-types="activityTypes"></travel-hub>
+				<travel-hub v-ref:hub :hub.sync="selectedHub" :activity-types="activityTypes"></travel-hub>
 			</div>
 		</modal>
 		<modal title="Delete Hub" small ok-text="Delete" :callback="deleteHub" :show.sync="showHubDeleteModal">
@@ -167,6 +163,14 @@
                 },
 	            deep: true
             },
+		    hubModal(val){
+                if (!val)
+                    this.selectedHub = null;
+		    },
+		    activityModal(val){
+                if (!val)
+                    this.selectedActivity = null;
+		    },
 	    },
         methods: {
             ActivityFactory() {
@@ -188,6 +192,16 @@
                     country_code: '',
                 }
             },
+            getActivities() {
+                let params = _.extend({}, this.activityFilters);
+                params.page = this.activitiesPagination.current_page;
+                params.include = 'hubs';
+
+                return this.ActivityResource.get(params).then(function (response) {
+                    this.activitiesPagination = response.body.meta.pagination;
+                    return this.activities = response.body.data;
+                }, this.handleApiError);
+            },
             newActivity() {
 				this.selectedActivity = _.extend({}, this.ActivityFactory());
 				this.activityModal = true;
@@ -206,16 +220,6 @@
                 this.editMode = true;
                 this.hubModal = true;
             },
-			getActivities() {
-                let params = _.extend({}, this.activityFilters);
-                params.page = this.activitiesPagination.current_page;
-                params.include = 'hubs';
-
-                return this.ActivityResource.get(params).then(function (response) {
-			        this.activitiesPagination = response.body.meta.pagination;
-				    return this.activities = response.body.data;
-                }, this.handleApiError);
-			},
 	        confirmDeleteHub(hub){
                 this.selectedHub = hub;
                 this.showHubDeleteModal = true;
@@ -225,10 +229,52 @@
 	            this.showActivityDeleteModal = true;
 	        },
 	        saveHub(){
+                // trigger validation styles
+                this.$broadcast('validate-itinerary');
+
 	            let data = _.extend({}, this.selectedHub);
-	            data.campaign_id = null;
+				let promise;
+	            if (data.id) {
+	                promise = this.HubResource.update({ hub: data.id}, data).then(function (response) {
+                        this.editMode = false;
+                        this.getActivities();
+                    }, this.handleApiError);
+	            } else {
+                    data.campaign_id = null;
+                    promise = this.HubResource.save(data).then(function (response) {
+                        this.getActivities();
+
+                    }, this.handleApiError);
+	            }
+
+	            promise.then(function () {
+		            this.hubModal = false;
+                });
 	        },
-	        saveActivity(){},
+	        saveActivity(){
+                // trigger validation styles
+                this.$broadcast('validate-itinerary');
+
+                let data = _.extend({}, this.selectedActivity);
+				let promise;
+                if (data.id) {
+                    promise = this.ActivityResource.update({ activity: data.id}, data).then(function (response) {
+                        this.editMode = false;
+                        this.getActivities();
+                    }, this.handleApiError);
+                } else {
+                    data.campaign_id = null;
+                    promise = this.ActivityResource.save(data).then(function (response) {
+                        this.getActivities();
+
+                    }, this.handleApiError);
+                }
+
+                promise.then(function () {
+                    this.activityModal = false;
+                });
+
+            },
 	        updateHub(){},
 	        updateActivity(){},
 	        deleteHub(){
