@@ -178,7 +178,7 @@
 					          :options="shirtSizeOptions" label="name" placeholder="Shirt Sizes"></v-select>
 				</div>
 
-				<div class="form-group">
+				<div class="form-group" v-if="propertyExists('age')">
 					<div class="row">
 						<div class="col-xs-12">
 							<label>Age Range</label>
@@ -234,7 +234,7 @@
 			filters: {
 			    type: Object,
 				required: true,
-				default: { age: [0, 120] }
+				default: null
 			},
 		    // Reset function used to restore defaults of variables that are needed for filters,
 		    // but are not in the filters object

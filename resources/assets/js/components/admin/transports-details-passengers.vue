@@ -1,10 +1,10 @@
 <template>
 	<div>
 		<aside :show.sync="showPassengersFilters" placement="left" header="Passengers Filters" :width="375">
-			<reservations-filters v-ref:filters :filters.sync="reservationFilters" :reset-callback="resetFilter" :pagination="reservationsPagination" :callback="searchReservations" storage="" :starter="startUp" teams></reservations-filters>
+			<reservations-filters v-ref:filters :filters.sync="passengersFilters" :reset-callback="resetPassengerFilters" :pagination="passengersPagination" :callback="getPassengers" storage="" teams></reservations-filters>
 		</aside>
 		<aside :show.sync="showReservationsFilters" placement="left" header="Reservations Filters" :width="375">
-			<reservations-filters v-ref:filters :filters.sync="reservationFilters" :reset-callback="resetFilter" :pagination="reservationsPagination" :callback="searchReservations" storage="" :starter="startUp" teams></reservations-filters>
+			<reservations-filters v-ref:filters :filters.sync="reservationFilters" :reset-callback="resetReservationFilters" :pagination="reservationsPagination" :callback="searchReservations" storage="" teams></reservations-filters>
 		</aside>
 
 		<div class="row">
@@ -353,6 +353,8 @@
             },
 	    },
         methods: {
+            resetPassengerFilters(){},
+            resetReservationFilters(){},
             getGenderStatusIcon(reservation){
                 if (reservation.gender == 'male') {
                     if (reservation.status == 'married') {

@@ -17,7 +17,7 @@
 				</div>
 			</div>
 		</div>
-		<tabs>
+		<tabs v-if="transport">
 			<tab header="Itinerary">
 				<transports-details-itinerary :transport="transport" :campaign-id="campaignId"></transports-details-itinerary>
 			</tab>
@@ -64,7 +64,7 @@
         },
         methods: {
             getTransport() {
-                return this.TransportsResource.get({ transport: this.transportId }).then(function (response) {
+                this.TransportsResource.get({ transport: this.transportId }).then(function (response) {
 	                this.transport = response.body.data;
                 });
             }
