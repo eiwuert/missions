@@ -20,6 +20,11 @@ class Activity extends Model
         return $this->morphTo();
     }
 
+    public function itineraries()
+    {
+        return $this->morphedByMany(Itinerary::class, 'activitable');
+    }
+
     public function transports()
     {
         return $this->morphedByMany(Transport::class, 'activitable');
