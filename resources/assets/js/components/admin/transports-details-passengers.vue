@@ -341,7 +341,7 @@
 	                search: '',
                 },
 
-	            PassengersResource: this.$resource('transports{/transport}passengers{/passenger}')
+	            PassengersResource: this.$resource('transports{/transport}/passengers{/passenger}')
             }
         },
 	    watch: {
@@ -413,7 +413,7 @@
             },
         },
         ready(){
-//			this.getPassengers();
+			this.getPassengers();
 //			this.searchReservations();
         }
     }
