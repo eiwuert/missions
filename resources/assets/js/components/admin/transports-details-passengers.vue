@@ -154,42 +154,6 @@
 					</div>
 					<div class="col-xs-12">
 						<reservations-filters-indicator :filters.sync="reservationFilters"></reservations-filters-indicator>
-						<hr class="divider inv">
-						<div>
-							<label>Active Filters</label>
-							<span style="margin-right:2px;" class="label label-default" v-show="reservationFilters.type != ''" @click="reservationFilters.type = ''" >
-									Trip Type
-									<i class="fa fa-close"></i>
-								</span>
-							<span style="margin-right:2px;" class="label label-default" v-show="reservationFilters.groups.length" @click="reservationFilters.groups = []" >
-									Travel Group
-									<i class="fa fa-close"></i>
-								</span>
-							<span style="margin-right:2px;" class="label label-default" v-show="reservationFilters.hasCompanions !== null" @click="reservationFilters.hasCompanions = null" >
-									Companions
-									<i class="fa fa-close"></i>
-								</span>
-							<span style="margin-right:2px;" class="label label-default" v-show="reservationFilters.role !== ''" @click="reservationFilters.role = ''" >
-									Role
-									<i class="fa fa-close"></i>
-								</span>
-							<span style="margin-right:2px;" class="label label-default" v-show="reservationFilters.gender != ''" @click="reservationFilters.gender = ''" >
-									Gender
-									<i class="fa fa-close"></i>
-								</span>
-							<span style="margin-right:2px;" class="label label-default" v-show="reservationFilters.status != ''" @click="reservationFilters.status = ''" >
-									Status
-									<i class="fa fa-close"></i>
-								</span>
-							<span style="margin-right:2px;" class="label label-default" v-show="reservationFilters.age[0] != 0" @click="reservationFilters.age[0] = 0" >
-									Min. Age
-									<i class="fa fa-close"></i>
-								</span>
-							<span style="margin-right:2px;" class="label label-default" v-show="reservationFilters.age[1] != 120" @click="reservationFilters.age[1] = 120" >
-									Max. Age
-									<i class="fa fa-close"></i>
-								</span>
-						</div>
 					</div>
 
 				</form>
@@ -301,6 +265,11 @@
                 reservations: [],
                 reservationsPagination: { current_page: 1 },
 	            passengersFilters: {
+                    gender: '',
+                    status: '',
+                    role: '',
+                    age: [0, 120],
+                    hasCompanions: null,
                     search: '',
 	            },
                 reservationFilters: {
