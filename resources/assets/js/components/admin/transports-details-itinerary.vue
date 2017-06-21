@@ -90,7 +90,7 @@
 									<div class="tab-content">
 										<div role="tabpanel" class="tab-pane active" id="hubs">
 											<div class="text-right">
-												<button class="btn btn-sm btn-primary" type="button" @click="newHub">Add Hub</button>
+												<button class="btn btn-sm btn-primary" type="button" @click="newHub(activity)">Add Hub</button>
 											</div>
 											<hr class="divider inv">
 											<div class="list-group">
@@ -150,6 +150,13 @@
 
 		<modal :title="editMode?'Edit Activity':'Create Activity'" :ok-text="editMode?'Update':'Create'" :callback="saveActivity" :show.sync="activityModal">
 			<div slot="modal-body" class="modal-body" v-if="selectedActivity">
+				<div class="form-group">
+					<label>Activity Type</label>
+					<select class="form-control" v-model="selectedActivity.activity_type_id">
+						<option value="">Any Type</option>
+						<option :value="type.id" v-for="type in UTILITIES.activityTypes" v-text="type.name|capitalize"></option>
+					</select>
+				</div>
 				<travel-activity v-ref:activity :activity="selectedActivity" :activity-types="activityTypes" transport-domestic></travel-activity>
 			</div>
 		</modal>
@@ -220,16 +227,12 @@
             },
 		    hubModal(val){
                 if (!val)
-                    this.$nextTick(function () {
-                        this.selectedHub = null;
-                    });
+                    this.selectedHub = null;
 
 		    },
 		    activityModal(val){
                 if (!val)
-                    this.$nextTick(function () {
-                        this.selectedActivity = null;
-                    });
+                    this.selectedActivity = null;
 		    },
 	    },
         methods: {
@@ -267,12 +270,13 @@
 				this.selectedActivity = _.extend({}, this.ActivityFactory());
 				this.activityModal = true;
             },
-            newHub() {
-				this.selectedHub = _.extend({}, this.HubFactory());
+            newHub(activity) {
+				this.selectedHub = _.extend({ activity_id: activity.id }, this.HubFactory());
 				this.hubModal = true;
             },
             editActivity(activity) {
 				this.selectedActivity = activity;
+				this.selectedActivity.activity_type_id = activity.type.id;
 				this.editMode = true;
 				this.activityModal = true;
             },
@@ -290,7 +294,9 @@
 	            this.showActivityDeleteModal = true;
 	        },
 	        saveHub(){
-                let data = _.extend({}, this.selectedHub);
+                let data = _.extend({
+
+                }, this.selectedHub);
                 let promise;
 
                 // trigger validation styles
@@ -314,7 +320,11 @@
                 });
 	        },
 	        saveActivity(){
-                let data = _.extend({}, this.selectedActivity);
+                let data = _.extend({
+                    participant_type: 'campaign',
+	                participant_id: this.campaignId,
+                    transport_id: this.transport.id
+                }, this.selectedActivity);
                 let promise;
 
                 // trigger validation styles
@@ -338,17 +348,17 @@
                 });
 
             },
-	        updateHub(){},
-	        updateActivity(){},
 	        deleteHub(){
                 this.HubResource.delete({ activity: this.selectedHub.id }).then(function () {
                     this.getActivities();
+                    this.showHubDeleteModal = false;
                 }, this.handleApiError);
 	        },
 	        deleteActivity(){
 	            this.ActivityResource.delete({ activity: this.selectedActivity.id }).then(function () {
 	                this.getActivities();
-	            }, this.handleApiError);
+                    this.showActivityDeleteModal = false;
+                }, this.handleApiError);
 	        },
         },
         ready(){

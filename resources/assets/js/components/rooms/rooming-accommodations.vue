@@ -255,11 +255,6 @@
                                                                 {{ plan.occupants_count || 0 }} <i class="fa fa-users"></i>
                                                             </small>
                                                         </h5>
-														<label>Rooms</label><br />
-														<span v-for="(key, val) in plan.rooms_count">
-						                            <p class="small" style="line-height:1;margin-bottom:2px;display:inline-block;"><span v-if="$index != 0"> &middot; </span>{{key | capitalize}}: <strong>{{val}}</strong></p>
-						                        </span>
-
 													</div>
 													<div class="col-xs-3 text-right">
 														<button :disabled="!currentAccommodation" class="btn btn-xs btn-primary-hollow" type="button" @click="addPlanToAccommodation(plan, currentAccommodation)">
@@ -268,6 +263,12 @@
 														<a :class="{ 'disabled': plan.rooms.data.length === 0 }" class="btn btn-xs btn-default-hollow" role="button" data-toggle="collapse" data-parent="#plansAccordion" :href="'#planItem' + $index" aria-expanded="true" aria-controls="collapseOne">
 															<i class="fa fa-angle-down"></i>
 														</a>
+													</div>
+													<div class="col-xs-12">
+														<label>Rooms</label><br />
+														<span v-for="(key, val) in plan.rooms_count">
+								                            <p class="small" style="line-height:1;margin-bottom:2px;display:inline-block;"><span v-if="$index != 0"> &middot; </span>{{key | capitalize}}: <strong>{{val}}</strong> <span v-if="plan.rooms_count_remaining[key] && plan.rooms_count_remaining[key] !== val">({{plan.rooms_count_remaining[key]}} left)</span></p>
+								                        </span>
 													</div>
 												</div>
 											</div>
@@ -440,6 +441,13 @@
             addPlanToAccommodation(plan, accommodation) {
 	            this.$http.post('rooming/accommodations/' + accommodation.id + '/plans', { plan_ids: [plan.id] })
 		            .then(function (response) {
+                        let listedAccommodation = _.findWhere(this.accommodations, { id: accommodation.id});
+                            _.each(plan.rooms_count, function (count, type) {
+                                console.log(listedAccommodation);
+                                if (listedAccommodation)
+                                    listedAccommodation.rooms_count[type] += count;
+                                accommodation.rooms_count[type] += count
+                            });
 		                this.getCurrentAccommodationRooms();
                         this.getRoomingPlans();
 		                this.$root.$emit('showSuccess', plan.name + ' successfully added to accommodation.');
@@ -448,17 +456,21 @@
             addRoomToAccommodation(room, accommodation) {
                 this.$http.post('rooming/accommodations/' + accommodation.id + '/rooms', { room_ids: [room.id] })
                     .then(function (response) {
+                        accommodation.rooms_count[room.type]++;
+                        accommodation.rooms_count.total++;
                         this.getCurrentAccommodationRooms();
-                        this.getRoomingPlans()
-                        this.$root.$emit('showSuccess', room.name + ' successfully added to accommodation.');
+                        this.getRoomingPlans();
+                        this.$root.$emit('showSuccess', (room.label ? (room.label + ' - ' + room.type) : room.type) + ' successfully added to accommodation.');
                     })
             },
             removeRoomFromAccommodation(room, accommodation) {
                 this.$http.delete('rooming/accommodations/' + accommodation.id + '/rooms/' + room.id)
                     .then(function (response) {
+                        accommodation.rooms_count[room.type]--;
+                        accommodation.rooms_count.total--;
                         this.getCurrentAccommodationRooms();
-                        this.getRoomingPlans()
-                        this.$root.$emit('showSuccess', room.name + ' successfully removed from accommodation.');
+                        this.getRoomingPlans();
+                        this.$root.$emit('showSuccess', (room.label ? (room.label + ' - ' + room.type) : room.type) + ' successfully removed from accommodation.');
                     })
             },
             getAccommodations(){
@@ -507,6 +519,9 @@
                 });
 
                 return this.PlansResource.get(params).then(function (response) {
+                    _.each(response.body.data, function (plan) {
+                        plan.rooms_count_remaining = _.countBy(plan.rooms.data, 'type');
+                    });
                     this.pagination = response.body.meta.pagination;
                     return this.plans = response.body.data;
                 })
