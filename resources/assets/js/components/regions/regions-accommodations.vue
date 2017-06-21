@@ -49,11 +49,11 @@
 				</form>
 
 				<div class="collapse" id="AccommodationModal">
-					<div class="panel panel-default" v-if="currentAccommodation">
+					<div class="panel panel-default" v-if="showAccommodationManageModal">
 						<div class="panel-heading">
 							<h5 v-text="editMode?'Update an Accommodation':'Create an Accommodation'"></h5>
 						</div>
-					    <div class="panel-body">
+					    <div class="panel-body" v-if="currentAccommodation">
 						    <validator name="AccommodationForm">
 							    <form id="AccommodationForm" name="AccommodationForm" @submit.prevent="manageAccommodation">
 								    <div class="row">
@@ -329,8 +329,11 @@
         },
         watch: {
             showAccommodationManageModal(val) {
-                if ($.fn.collapse)
-                    $('#AccommodationModal').collapse(val ? 'show' : 'hide')
+                this.$nextTick(function () {
+                    if ($.fn.collapse)
+                        $('#AccommodationModal').collapse(val ? 'show' : 'hide');
+                });
+
             },
             currentRegion() {
                 this.accommodationsPagination.current_page = 1;
@@ -412,7 +415,10 @@
                     delete data.room_types_settings;
 
                 return this.AccommodationsResource.save({ region: this.currentRegion.id }, data).then(function (response) {
-                    this.handleAccommodationRoomTypes(_.extend(this.currentAccommodation, response.body.data));
+	                let newAccommodation = response.body.data;
+                    this.handleAccommodationRoomTypes(_.extend(this.currentAccommodation, newAccommodation));
+                    this.currentRegion.accommodations.data.push(newAccommodation);
+                    this.accommodations.push(newAccommodation);
                     this.currentAccommodation = null;
                     this.showAccommodationManageModal = false;
 //                    return this.getAccommodations();
