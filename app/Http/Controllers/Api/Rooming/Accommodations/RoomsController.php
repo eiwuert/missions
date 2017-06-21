@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Rooming\Accommodations;
 
+use App\Http\Transformers\v1\RoomTransformer;
 use App\Repositories\Rooming\Interfaces\Room;
 use App\Services\Rooming\ManageRooms;
 use Illuminate\Http\Request;
@@ -16,17 +17,35 @@ class RoomsController extends Controller
         $this->room = $room;
     }
 
-    public function store(Request $request, $accommodationId)
+    public function index($accommodationId, Request $request)
     {
-        $manager = new ManageRooms('acommodations', $accommodationId);
-        $manager->add($request->get('roomIds'));
+        $request->merge(['accommodations' => $accommodationId]);
+
+        $rooms = $this->room
+            ->filter($request->all())
+            ->paginate($request->get('per_page'));
+
+        return $this->response->paginator($rooms, new RoomTransformer);
+    }
+
+    public function show($accommodationId, $id)
+    {
+        $room = $this->room->filter(['accommodations' => $accommodationId])->getByid($id);
+
+        return $this->response->item($room, new RoomTransformer);
+    }
+
+    public function store($accommodationId, Request $request)
+    {
+        $manager = new ManageRooms('accommodations', $accommodationId);
+        $manager->add($request->get('room_ids', []));
 
         return $this->response->created();
     }
 
     public function destroy($accommodationId, $id)
     {
-        $manager = new ManageRooms('acommodations', $accommodationId);
+        $manager = new ManageRooms('accommodations', $accommodationId);
         $manager->remove([$id]);
 
         return $this->response->noContent();
