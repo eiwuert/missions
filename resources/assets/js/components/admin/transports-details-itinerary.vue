@@ -190,7 +190,7 @@
                 return {
                     name: '',
                     address: '',
-                    call_sign: '', // required
+                    call_sign: '',
                     city: '',
                     state: '',
                     zip: '',
@@ -198,9 +198,10 @@
                 }
             },
             getActivities() {
-                let params = _.extend({}, this.activityFilters);
-                params.page = this.activitiesPagination.current_page;
-                params.include = 'hubs';
+                let params = _.extend({
+	                page: this.activitiesPagination.current_page,
+                    include: 'hubs'
+                }, this.activityFilters);
 
                 return this.ActivityResource.get(params).then(function (response) {
                     this.activitiesPagination = response.body.meta.pagination;

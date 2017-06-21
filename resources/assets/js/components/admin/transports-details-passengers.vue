@@ -12,7 +12,7 @@
 			<div class="col-sm-8">
 				<form class="form-inline row">
 					<div class="input-group input-group-sm col-sm-7">
-						<input type="text" class="form-control" v-model="passengersFilters.search" debounce="300" placeholder="Search">
+						<input type="text" class="form-control" v-model="passengersFilters.search" debounce="300" placeholder="Search Passengers">
 						<span class="input-group-addon"><i class="fa fa-search"></i></span>
 					</div>
 					<div class="form-group col-sm-5">
@@ -78,24 +78,9 @@
 										</div><!-- end media -->
 									</div>
 									<div class="col-xs-3 text-right action-buttons">
-										<dropdown type="default">
-											<button slot="button" type="button" class="btn btn-xs btn-primary-hollow dropdown-toggle">
-												<span class="fa fa-ellipsis-h"></span>
-											</button>
-											<ul slot="dropdown-menu" class="dropdown-menu dropdown-menu-right">
-												<template v-for="subSquad in currentSquadGroups | orderBy 'callsign'">
-													<template v-if="subSquad.callsign !== 'Squad Leaders'">
-														<li :class="{'disabled': isLocked}" v-if="canAssignToTeamLeaders(subSquad)"><a @click="moveToSquad(passenger, squad, subSquad, false)">Move to Squad Leaders</a></li>
-														<li :class="{'disabled': isLocked}" v-if="canAssignToPassenger(subSquad, subSquad)"><a @click="moveToSquad(passenger, squad, subSquad, true)" v-text="'Move to ' + subSquad.callsign + ' as leader'"></a></li>
-														<li :class="{'disabled': isLocked}" v-if="canAssignToSquad(subSquad)"><a @click="moveToSquad(passenger, squad, subSquad, false)" v-text="'Move to ' + subSquad.callsign"></a></li>
-													</template>
-												</template>
-												<li :class="{'disabled': isLocked}" role="separator" class="divider"></li>
-												<!--<li :class="{'disabled': isLocked}" v-if="passenger && passenger.reservation.leader"><a @click="demoteToPassenger(passenger, squad)">Demote to Group Passenger</a></li>-->
-												<!--<li :class="{'disabled': isLocked}" v-if="passenger && !passenger.reservation.leader && !squadHasLeader(squad)"<a @click="promoteToLeader(passenger, squad)">Promote to Group Leader</a></li>-->
-												<li :class="{'disabled': isLocked}"><a @click="removeFromSquad(passenger, squad)">Remove</a></li>
-											</ul>
-										</dropdown>
+										<a class="btn btn-xs btn-primary-hollow" @click="removePassenger(passenger)">
+											<span class="fa fa-ellipsis-h"></span>
+										</a>
 										<a class="btn btn-xs btn-default-hollow" role="button" data-toggle="collapse" data-parent="#PassengerAccordion" :href="'#squadLeaderItem' + $index" aria-expanded="true" aria-controls="collapseOne">
 											<i class="fa fa-angle-down"></i>
 										</a>
@@ -152,7 +137,7 @@
 			<div class="col-sm-4">
 				<form class="form-inline row">
 					<div class="input-group input-group-sm col-sm-7">
-						<input type="text" class="form-control" v-model="reservationFilters.search" debounce="300" placeholder="Search">
+						<input type="text" class="form-control" v-model="reservationFilters.search" debounce="300" placeholder="Search Reservations">
 						<span class="input-group-addon"><i class="fa fa-search"></i></span>
 					</div>
 
@@ -224,30 +209,9 @@
 												</div><!-- end media -->
 											</div>
 											<div class="col-xs-3 text-right action-buttons">
-												<dropdown type="default">
-													<button slot="button" type="button" class="btn btn-xs btn-primary-hollow dropdown-toggle">
-														<span class="fa fa-ellipsis-h"></span>
-													</button>
-													<ul slot="dropdown-menu" class="dropdown-menu dropdown-menu-right">
-														<li class="dropdown-header">Assign To Squad</li>
-														<li role="separator" class="divider"></li>
-														<template v-for="squad in currentSquadGroups | orderBy 'callsign'">
-															<template v-if="squad.callsign === 'Squad Leaders'">
-																<li :class="{'disabled': isLocked}" v-if="canAssignToTeamLeaders(squad) && isLeadership(reservation)"><a @click="assignToSquad(reservation, squad, false)">Squad Leader</a></li>
-															</template>
-															<template v-else>
-																<li :class="{'disabled': isLocked}" v-if="canAssignToPassenger(squad) && isLeadership(reservation)"><a @click="assignToSquad(reservation, squad, true)" v-text="squad.callsign + ' Leader'"></a></li>
-																<li :class="{'disabled': isLocked}" v-if="canAssignToSquad(squad)"><a @click="assignToSquad(reservation, squad, false)" v-text="squad.callsign"></a></li>
-															</template>
-														</template>
-														<li role="separator" class="divider"></li>
-														<li class="dropdown-header">Change Role</li>
-														<li role="separator" class="divider"></li>
-														<li v-if="reservation.desired_role.name !== 'Squad Leader'"><a @click="updateRole(reservation, 'Squad Leader')">Squad Leader</a></li>
-														<li v-if="reservation.desired_role.name !== 'Group Leader'"><a @click="updateRole(reservation, 'Group Leader')">Group Leader</a></li>
-
-													</ul>
-												</dropdown>
+												<a class="btn btn-xs btn-primary-hollow" @click="addPassenger(reservation)">
+													<span class="fa fa-ellipsis-h"></span>
+												</a>
 												<a class="btn btn-xs btn-default-hollow" role="button" data-toggle="collapse" data-parent="#reservationsAccordion" :href="'#reservationItem' + $index" aria-expanded="true" aria-controls="collapseOne">
 													<i class="fa fa-angle-down"></i>
 												</a>
@@ -374,6 +338,12 @@
 
                 this.PassengersResource.get({ transport: this.transport.id}, params)
             },
+	        addPassenger(reservation) {
+
+	        },
+	        removePassenger(passenger) {
+
+	        },
             searchReservations(){
                 let params = {
                     include: 'trip.campaign,trip.group,user,companions',
