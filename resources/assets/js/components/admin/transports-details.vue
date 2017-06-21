@@ -2,18 +2,20 @@
 	<div>
 		<div class="panel panel-default" v-if="transport">
 			<div class="panel-heading">
-				<h3 class="panel-title" v-text="transport.name"></h3>
-				<p class="small">
-					<i class="fa" :class="{ 'fa-bus': transport.type === 'bus', 'fa-plane': transport.type === 'flight', 'fa-car': transport.type === 'vehicle', 'fa-train': transport.type === 'train'}"></i>
+				<h3>
+					{{ transport.name }}
+					<br />
+					<small><i class="fa" :class="{ 'fa-bus': transport.type === 'bus', 'fa-plane': transport.type === 'flight', 'fa-car': transport.type === 'vehicle', 'fa-train': transport.type === 'train'}"></i>
 					{{ transport.type | capitalize }}
 					<span class="label label-default" v-text="transport.domestic ? 'Domestic' : 'International'"></span>
-				</p>
+					</small>
+				</h3>
 			</div>
 			<div class="panel-body">
 				<div class="row">
-					<div class="col-sm-4"><b>Vessel No.</b> {{transport.vessel_no}}</div>
-					<div class="col-sm-4"><b>Call Sign</b> {{transport.call_sign}}</div>
-					<div class="col-sm-4"><b>Capacity</b> {{transport.capacity}}</div>
+					<div class="col-sm-4"><label>Vessel No.</label> {{transport.vessel_no}}</div>
+					<div class="col-sm-4"><label>Call Sign</label> {{transport.call_sign}}</div>
+					<div class="col-sm-4"><label>Capacity</label> {{transport.capacity}}</div>
 				</div>
 			</div>
 		</div>
@@ -25,12 +27,12 @@
 				<transports-details-passengers :transport="transport" :campaign-id="campaignId"></transports-details-passengers>
 			</tab>
 			<tab header="Notes">
-				<!--<notes type="teams"
-				       :id="currentTeam.id"
-				       :user_id="userId"
-				       :per_page="5"
-				       :can-modify="isAdminRoute ? 1 : 0">
-				</notes>-->
+				<!--<notes type="transports"-->
+				       <!--:id="transport.id"-->
+				       <!--:user_id="userId"-->
+				       <!--:per_page="5"-->
+				       <!--:can-modify="isAdminRoute ? 1 : 0">-->
+				<!--</notes>-->
 			</tab>
 		</tabs>
 
