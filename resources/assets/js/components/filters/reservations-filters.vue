@@ -198,6 +198,52 @@
 					</div>
 				</div>
 
+				<template v-if="!teams && !rooms">
+					<div class="form-group">
+						<div class="row">
+							<div class="col-xs-12">
+								<label>Percent Raised</label>
+							</div>
+							<div class="col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon">Min</span>
+									<input type="text" class="form-control"  v-model="filters.minPercentRaised" min="0">
+									<span class="input-group-addon">%</span>
+								</div>
+							</div>
+							<div class="col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon">Max</span>
+									<input type="text" class="form-control"  v-model="filters.maxPercentRaised" max="100">
+									<span class="input-group-addon">%</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="row">
+							<div class="col-xs-12">
+								<label>Amount Raised</label>
+							</div>
+							<div class="col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon">Min $</span>
+									<input type="text" class="form-control"  v-model="filters.minAmountRaised" min="0">
+									<span class="input-group-addon">.00</span>
+								</div>
+							</div>
+							<div class="col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon">Max $</span>
+									<input type="text" class="form-control"  v-model="filters.maxAmountRaised" max="100">
+									<span class="input-group-addon">.00</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</template>
+
 				<div class="form-group">
 					<label>Travel Companions</label>
 					<div>
