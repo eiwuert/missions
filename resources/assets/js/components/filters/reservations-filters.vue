@@ -2,20 +2,20 @@
 	<div>
 		<hr class="divider inv sm">
 		<form class="col-sm-12">
-			<div class="form-group" v-if="!teams || !rooms">
+			<div class="form-group" v-if="propertyExists('groups')">
 				<label>Groups</label>
 				<v-select @keydown.enter.prevent=""  class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
 				          :value.sync="groupsArr" :options="groupsOptions" label="name"
 				          placeholder="Filter Groups"></v-select>
 			</div>
-			<div class="form-group" v-if="!tripSpecific && !teams && !rooms">
+			<div class="form-group" v-if="propertyExists('campaign')">
 				<label>Campaign</label>
 				<v-select @keydown.enter.prevent=""  class="form-control" id="campaignFilter" :debounce="250" :on-search="getCampaigns"
 				          :value.sync="campaignObj" :options="campaignOptions" label="name"
 				          placeholder="Filter by Campaign"></v-select>
 			</div>
 
-			<div class="form-group">
+			<div class="form-group" v-if="propertyExists('type')">
 				<label>Trip Type</label>
 				<select  class="form-control input-sm" v-model="filters.type">
 					<option value="">Any Type</option>
@@ -30,14 +30,14 @@
 
 			<template v-if="isAdminRoute || facilitator || teams || rooms">
 
-				<div class="form-group" v-if="isAdminRoute && teams">
+				<div class="form-group" v-if="isAdminRoute && propertyExists('groups') && teams">
 					<label>Travel Group</label>
 					<v-select @keydown.enter.prevent=""  class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
 					          :value.sync="groupsArr" :options="groupsOptions" label="name"
 					          placeholder="Filter Groups"></v-select>
 				</div>
 
-				<div class="form-group" v-if="!isAdminRoute || teams || rooms">
+				<div class="form-group" v-if="propertyExists('role') && (!isAdminRoute || teams || rooms)">
 					<label v-text="teams ? 'Role' : 'Desired Role'"></label>
 					<v-select @keydown.enter.prevent="" class="form-control" id="roleFilter" :debounce="250" :on-search="getRolesSearch"
 					          :value.sync="roleObj" :options="UTILITIES.roles" label="name"
@@ -49,14 +49,14 @@
 					</select>-->
 				</div>
 
-				<div class="form-group" v-if="isAdminRoute">
+				<div class="form-group" v-if="isAdminRoute && (propertyExists('users') || propertyExists('user'))">
 					<label>Managing Users</label>
 					<v-select @keydown.enter.prevent=""  class="form-control" id="userFilter" multiple :debounce="250" :on-search="getUsers"
 					          :value.sync="usersArr" :options="usersOptions" label="name"
 					          placeholder="Filter Users"></v-select>
 				</div>
 
-				<div class="form-group">
+				<div class="form-group" v-if="propertyExists('gender')">
 					<label>Gender</label>
 					<select class="form-control input-sm" v-model="filters.gender" style="width:100%;">
 						<option value="">Any Genders</option>
@@ -65,7 +65,7 @@
 					</select>
 				</div>
 
-				<div class="form-group">
+				<div class="form-group" v-if="propertyExists('status')">
 					<label>Marital Status</label>
 					<select class="form-control input-sm" v-model="filters.status" style="width:100%;">
 						<option value="">Any Status</option>
@@ -75,7 +75,7 @@
 				</div>
 
 				<!-- Cost/Payments -->
-				<template v-if="!teams && !rooms">
+				<template v-if="!teams && !rooms && propertyExists('dueName')">
 					<div class="form-group">
 						<label>Applied Cost</label>
 						<select class="form-control input-sm" v-model="filters.dueName" style="width:100%;">
@@ -99,7 +99,7 @@
 				</template>
 				<!-- end cost/payments -->
 
-				<div class="form-group" v-if="isAdminRoute || teams || rooms">
+				<div class="form-group" v-if="(isAdminRoute || teams || rooms) && propertyExists('designation')">
 					<label>Arrival Designation</label>
 					<select  class="form-control input-sm" v-model="filters.designation">
 						<option value="">Any</option>
@@ -111,7 +111,7 @@
 				</div>
 
 				<!-- Requirements -->
-				<template v-if="!teams && !rooms">
+				<template v-if="!teams && !rooms && propertyExists('requirementName')">
 					<div class="form-group">
 						<label>Requirements</label>
 						<select class="form-control input-sm" v-model="filters.requirementName" style="width:100%;">
@@ -135,7 +135,7 @@
 				<!-- end requirements -->
 
 				<!-- Todos -->
-				<template v-if="isAdminRoute && !teams && !rooms">
+				<template v-if="isAdminRoute && !teams && !rooms && propertyExists('todoName')">
 					<div class="form-group">
 						<label>Todos</label>
 						<select class="form-control input-sm" v-model="filters.todoName" style="width:100%;">
@@ -161,7 +161,7 @@
 				<!-- end todos -->
 
 				<!-- Trip Rep -->
-				<div class="form-group" v-if="isAdminRoute">
+				<div class="form-group" v-if="isAdminRoute && propertyExists('rep')">
 					<label>Trip Rep</label>
 					<select class="form-control input-sm" v-model="filters.rep" style="width:100%;">
 						<option value="">Any Rep</option>
@@ -172,7 +172,7 @@
 				</div>
 				<!-- end trip rep -->
 
-				<div class="form-group" v-if="!teams && !rooms">
+				<div class="form-group" v-if="!teams && !rooms && propertyExists('shirtSize')">
 					<label>Shirt Size</label>
 					<v-select @keydown.enter.prevent=""  class="form-control" id="ShirtSizeFilter" :value.sync="shirtSizeArr" multiple
 					          :options="shirtSizeOptions" label="name" placeholder="Shirt Sizes"></v-select>
@@ -198,7 +198,53 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<template v-if="!teams && !rooms">
+					<div class="form-group" v-if="propertyExists('minPercentRaised')">
+						<div class="row">
+							<div class="col-xs-12">
+								<label>Percent Raised</label>
+							</div>
+							<div class="col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon">Min</span>
+									<input type="text" class="form-control"  v-model="filters.minPercentRaised" min="0">
+									<span class="input-group-addon">%</span>
+								</div>
+							</div>
+							<div class="col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon">Max</span>
+									<input type="text" class="form-control"  v-model="filters.maxPercentRaised" max="100">
+									<span class="input-group-addon">%</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group" v-if="propertyExists('minAmountRaised')">
+						<div class="row">
+							<div class="col-xs-12">
+								<label>Amount Raised</label>
+							</div>
+							<div class="col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon">Min $</span>
+									<input type="text" class="form-control"  v-model="filters.minAmountRaised" min="0">
+									<span class="input-group-addon">.00</span>
+								</div>
+							</div>
+							<div class="col-xs-6">
+								<div class="input-group input-group-sm">
+									<span class="input-group-addon">Max $</span>
+									<input type="text" class="form-control"  v-model="filters.maxAmountRaised" max="100">
+									<span class="input-group-addon">.00</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</template>
+
+				<div class="form-group" v-if="propertyExists('hasCompanions')">
 					<label>Travel Companions</label>
 					<div>
 						<label class="radio-inline">
@@ -432,8 +478,8 @@
                 self.campaignObj = null;
             });
 
-            this.$root.$on('reservations-filters:preset', function () {
-
+            this.$root.$on('reservations-filters:update:filter', function (filters) {
+				self.filters = _.extend(self.filters, val);
             });
 
             this.$root.$on('reservations-filters:update-storage', function () {

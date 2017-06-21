@@ -86,7 +86,12 @@
 											{{ (room.label ? (room.label + ' - ' + room.type) : room.type) | capitalize }} <span v-if="getRoomLeader(room)"> <small> ({{getRoomLeader(room).given_names}} {{getRoomLeader(room).surname}})</small></span>
 											<span class="pull-right">
                                                 {{ room.occupants_count || 0 }} <i class="fa fa-users"></i>
+												&nbsp;
+												<a @click="removeRoomFromAccommodation(room, currentAccommodation)" class="btn btn-xs btn-default-hollow">
+													<i class="fa fa-minus"></i>
+												</a>
                                             </span>
+
 										</h5>
 
 									</div>
@@ -435,14 +440,26 @@
             addPlanToAccommodation(plan, accommodation) {
 	            this.$http.post('rooming/accommodations/' + accommodation.id + '/plans', { plan_ids: [plan.id] })
 		            .then(function (response) {
+		                this.getCurrentAccommodationRooms();
+                        this.getRoomingPlans();
 		                this.$root.$emit('showSuccess', plan.name + ' successfully added to accommodation.');
                     });
             },
             addRoomToAccommodation(room, accommodation) {
-                console.log('should add individual room to accomodation');
-                /*this.$http.post('rooming/accommodations/' + accommodation.id + '/plans').then(function (response) {
-
-                });*/
+                this.$http.post('rooming/accommodations/' + accommodation.id + '/rooms', { room_ids: [room.id] })
+                    .then(function (response) {
+                        this.getCurrentAccommodationRooms();
+                        this.getRoomingPlans()
+                        this.$root.$emit('showSuccess', room.name + ' successfully added to accommodation.');
+                    })
+            },
+            removeRoomFromAccommodation(room, accommodation) {
+                this.$http.delete('rooming/accommodations/' + accommodation.id + '/rooms/' + room.id)
+                    .then(function (response) {
+                        this.getCurrentAccommodationRooms();
+                        this.getRoomingPlans()
+                        this.$root.$emit('showSuccess', room.name + ' successfully removed from accommodation.');
+                    })
             },
             getAccommodations(){
                 let params = {
@@ -482,7 +499,7 @@
                     include: 'rooms:notInUse,rooms.occupants',
                 };
                 params = _.extend(params, {
-                    campaign: this.plansFilters.campaign ? this.plansFilters.campaign.id : null,
+                    campaign: this.campaignId,
                     group: this.plansFilters.group ? this.plansFilters.group.id : null,
                     notInUse: true,
                     search: this.plansSearch,
