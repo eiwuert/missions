@@ -2,7 +2,7 @@
 	<div>
 		<hr class="divider inv sm">
 		<form class="col-sm-12">
-			<div class="form-group" v-if="!teams || !rooms">
+			<div class="form-group" v-if="!teams && !rooms">
 				<label>Groups</label>
 				<v-select @keydown.enter.prevent=""  class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
 				          :value.sync="groupsArr" :options="groupsOptions" label="name"
@@ -478,8 +478,8 @@
                 self.campaignObj = null;
             });
 
-            this.$root.$on('reservations-filters:preset', function () {
-
+            this.$root.$on('reservations-filters:update:filter', function (filters) {
+				self.filters = _.extend(self.filters, val);
             });
 
             this.$root.$on('reservations-filters:update-storage', function () {

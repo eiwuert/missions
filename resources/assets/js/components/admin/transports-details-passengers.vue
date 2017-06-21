@@ -153,6 +153,7 @@
 						<a class="btn btn-default btn-sm" @click="showReservationsFilters = true;">Filters</a>
 					</div>
 					<div class="col-xs-12">
+						<reservations-filters-indicator :filters.sync="reservationFilters"></reservations-filters-indicator>
 						<hr class="divider inv">
 						<div>
 							<label>Active Filters</label>
@@ -285,10 +286,11 @@
     import errorHandler from '../error-handler.mixin';
     import utilities from '../utilities.mixin';
     import reservationsFilters from '../filters/reservations-filters.vue'
+    import reservationsFiltersIndicator from '../filters/reservations-filters-indicator.vue';
     export default{
         name: 'transports-details-passengers',
 //        mixins: [errorHandler, utilities],
-	    components: {vSelect, reservationsFilters},
+	    components: {vSelect, reservationsFilters, reservationsFiltersIndicator},
 	    props: ['transport', 'campaignId'],
         data(){
             return {

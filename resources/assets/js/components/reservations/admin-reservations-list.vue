@@ -138,62 +138,7 @@
                 </form>
             </div>
         </div>
-        <hr class="divider sm">
-		<div>
-			<label>Active Filters</label>
-			<!--<span style="margin-right:2px;" class="label label-default" v-show="filters.tags.length" @click="filters.tags = []" >
-				Tags
-				<i class="fa fa-close"></i>
-			</span>-->
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.user.length" @click="filters.user = []" >
-				Users
-				<i class="fa fa-close"></i>
-			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.groups.length" @click="filters.groups = []" >
-				Groups
-				<i class="fa fa-close"></i>
-			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.campaign != null" @click="filters.campaign = null" >
-				Campaign
-				<i class="fa fa-close"></i>
-			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.gender != ''" @click="filters.gender = ''" >
-				Gender
-				<i class="fa fa-close"></i>
-			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.status != ''" @click="filters.status = ''" >
-				Status
-				<i class="fa fa-close"></i>
-			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.rep != ''" @click="filters.rep = ''" >
-				Trip Rep.
-				<i class="fa fa-close"></i>
-			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.shirtSize != ''" @click="filters.shirtSize = ''" >
-				Shirt Size
-				<i class="fa fa-close"></i>
-			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.hasCompanions !== null" @click="filters.hasCompanions = null" >
-				Companions
-				<i class="fa fa-close"></i>
-			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.todoName != ''" @click="filters.todoName = '', filters.todoStatus = null" >
-				{{ todo }}
-				<i class="fa fa-close"></i>
-			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.designation != ''" @click="filters.designation = ''" >
-				Designation
-				<i class="fa fa-close"></i>
-			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.requirementName != ''" @click="filters.requirementName = '', filters.requirementStatus = ''" >
-				{{ requirement }}
-				<i class="fa fa-close"></i>
-			</span>
-			<span style="margin-right:2px;" class="label label-default" v-show="filters.dueName != ''" @click="filters.dueName = '', filters.dueStatus = ''" >
-				{{ due }}
-				<i class="fa fa-close"></i>
-			</span>
-		</div>
+        <reservations-filters-indicator :filters.sync="filters" :requirement="requirement" :due="due"></reservations-filters-indicator>
         <hr class="divider sm">
 		<div style="position:relative;">
 			<spinner v-ref:spinner size="sm" text="Loading"></spinner>
@@ -353,10 +298,11 @@
 	import vSelect from "vue-select";
 	import exportUtility from '../export-utility.vue';
 	import reservationsFilters from '../filters/reservations-filters.vue';
+	import reservationsFiltersIndicator from '../filters/reservations-filters-indicator.vue';
 	import reservationReports from '../admin/reporting/reservation-reports.vue';
 	export default{
 		name: 'admin-reservations-list',
-		components: {vSelect, exportUtility, reservationReports, reservationsFilters},
+		components: {vSelect, exportUtility, reservationReports, reservationsFilters, reservationsFiltersIndicator},
 		props: {
 			tripId: {
 				type: String,
