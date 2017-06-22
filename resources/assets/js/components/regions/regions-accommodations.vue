@@ -66,164 +66,164 @@
 
 				<div class="collapse" id="AccommodationModal">
 					<div class="panel panel-default" v-if="showAccommodationManageModal">
-                        <validator name="AccommodationForm">
-                            <form id="AccommodationForm"
-                                  name="AccommodationForm"
-                                  @submit.prevent="manageAccommodation">
-                                <div class="panel-heading">
-                                    <h5 v-text="editMode?'Update an Accommodation':'Create an Accommodation'"></h5>
-                                </div>
-					            <div class="panel-body" v-if="currentAccommodation">
-								    <div class="row">
-									    <div class="form-group col-sm-12"
-                                             v-error-handler="{ value: currentAccommodation.name, handle: 'name' }">
-										    <label for="AccoName" class="control-label">Name</label>
-										    <input @keydown.enter.prevent="manageAccommodation"
-                                                   type="text"
-                                                   class="form-control"
-                                                   id="AccoName" placeholder=""
-                                                   v-validate:name="['required']"
-                                                   v-model="currentAccommodation.name">
-									    </div>
-									    <div class="form-group col-sm-12"
-                                             v-error-handler="{ value: currentAccommodation.short_desc, handle: 'short_desc' }">
-										    <label for="AccoDescription" class="control-label">Description</label>
-										    <textarea class="form-control"
-                                                      id="AccoDescription"
-                                                      v-validate:short_desc=""
-                                                      v-model="currentAccommodation.short_desc">
+							<validator name="AccommodationForm">
+								<form id="AccommodationForm"
+								      name="AccommodationForm"
+								      @submit.prevent="manageAccommodation">
+									<div class="panel-heading">
+										<h5 v-text="editMode?'Update an Accommodation':'Create an Accommodation'"></h5>
+									</div>
+									<div class="panel-body" v-if="currentAccommodation">
+										<div class="row">
+											<div class="form-group col-sm-12"
+											     v-error-handler="{ value: currentAccommodation.name, handle: 'name' }">
+												<label for="AccoName" class="control-label">Name</label>
+												<input @keydown.enter.prevent="manageAccommodation"
+												       type="text"
+												       class="form-control"
+												       id="AccoName" placeholder=""
+												       v-validate:name="['required']"
+												       v-model="currentAccommodation.name">
+											</div>
+											<div class="form-group col-sm-12"
+											     v-error-handler="{ value: currentAccommodation.short_desc, handle: 'shortdesc' }">
+												<label for="AccoDescription" class="control-label">Description</label>
+												<textarea class="form-control"
+												          id="AccoDescription"
+												          v-validate:shortdesc=""
+												          v-model="currentAccommodation.short_desc">
                                             </textarea>
-									    </div>
-									    <div class="form-group col-sm-6"
-                                             v-error-handler="{ value: currentAccommodation.address_one, handle: 'addressone' }">
-										    <label for="AccoAddressOne" class="control-label">Address 1</label>
-										    <input type="text"
-                                                   class="form-control"
-                                                   id="AccoAddressOne"
-                                                   placeholder=""
-                                                   v-validate:addressone=""
-                                                   v-model="currentAccommodation.address_one">
-									    </div>
-									    <div class="form-group col-sm-6"
-                                             v-error-handler="{ value: currentAccommodation.address_two, handle: 'addresstwo' }">
-										    <label for="AccoAddressTwo" class="control-label">Address 2</label>
-										    <input type="text"
-                                                   class="form-control"
-                                                   id="AccoAddressTwo"
-                                                   placeholder=""
-                                                   v-validate:addresstwo=""
-                                                   v-model="currentAccommodation.address_two">
-									    </div>
-									    <div class="form-group col-sm-4"
-                                             v-error-handler="{ value: currentAccommodation.state, handle: 'city' }">
-										    <label for="AccoCity" class="control-label">City</label>
-										    <input type="text"
-                                                   class="form-control"
-                                                   id="AccoCity"
-                                                   placeholder=""
-                                                   v-validate:city=""
-                                                   v-model="currentAccommodation.city">
-									    </div>
-									    <div class="form-group col-sm-4"
-                                             v-error-handler="{ value: currentAccommodation.state, handle: 'state' }">
-										    <label for="AccoState" class="control-label">State</label>
-										    <input type="text"
-                                                   class="form-control"
-                                                   id="AccoState"
-                                                   placeholder=""
-                                                   v-validate:state=""
-                                                   v-model="currentAccommodation.state">
-									    </div>
-									    <div class="form-group col-sm-4"
-                                             v-error-handler="{ value: currentAccommodation.zip, handle: 'zip' }">
-										    <label for="AccoZip" class="control-label">Zip</label>
-										    <input type="text"
-                                                   class="form-control"
-                                                   id="AccoZip"
-                                                   placeholder=""
-                                                   v-validate:zip=""
-                                                   v-model="currentAccommodation.zip">
-									    </div>
-									    <div class="form-group col-sm-6"
-                                             v-error-handler="{ value: currentAccommodation.phone, handle: 'phone' }">
-										    <label for="AccoPhone" class="control-label">Phone</label>
-										    <input type="text"
-                                                   class="form-control"
-                                                   id="AccoPhone"
-                                                   placeholder=""
-                                                   v-validate:phone=""
-                                                   v-model="currentAccommodation.phone">
-									    </div>
-									    <div class="form-group col-sm-6"
-                                             v-error-handler="{ value: currentAccommodation.email, handle: 'email' }">
-										    <label for="AccoEmail" class="control-label">Email</label>
-										    <input type="email"
-                                                   class="form-control"
-                                                   id="AccoEmail"
-                                                   placeholder=""
-                                                   v-validate:email="['email']"
-                                                   v-model="currentAccommodation.email">
-									    </div>
-                                        <div class="form-group col-sm-6"
-                                             v-error-handler="{ value: currentAccommodation.fax, handle: 'fax' }">
-                                            <label for="AccoFax" class="control-label">Fax</label>
-                                            <input type="text"
-                                                   class="form-control"
-                                                   id="AccoFax"
-                                                   placeholder=""
-                                                   v-validate:fax=""
-                                                   v-model="currentAccommodation.fax">
-                                        </div>
-									    <div class="form-group col-sm-6"
-                                             v-error-handler="{ value: currentAccommodation.url, handle: 'url' }">
-										    <label for="AccoURL" class="control-label">URL</label>
-										    <input type="url"
-                                                   class="form-control"
-                                                   id="AccoURL"
-                                                   placeholder=""
-                                                   v-validate:url=""
-                                                   v-model="currentAccommodation.url">
-									    </div>
-								    </div>
-								    <div class="checkbox">
-									    <label>
-										    <input type="checkbox" v-model="currentAccommodationDifferentCountry" >
-										    Is this Accommodation in another country?
-									    </label>
-								    </div>
-								    <div class="form-group" v-if="currentAccommodationDifferentCountry">
-									    <label for="createPlanCallsign" class="control-label">
-                                            Region Country
-                                        </label>
-									    <v-select @keydown.enter.prevent=""
-                                                  class="form-control"
-                                                  :debounce="250"
-                                                  :on-search="getCountries"
-									              :value.sync="currentAccommodation.country"
-                                                  :options="UTILITIES.countries"
-                                                  label="name"
-									              placeholder="Select a Country">
-                                        </v-select>
-								    </div>
-					            </div>
-                                <template v-if="currentAccommodation.room_types_settings">
-                                    <div class="panel-heading">
-                                        <h5>Rooms Allowed</h5>
-                                    </div>
-                                    <div class="panel-body">
-                                        <div class="form-group col-sm-6" v-for="type in roomTypes">
-                                            <label :for="'settingsType-' + type.id" class="" v-text="type.name"></label>
-                                            <input type="number"
-                                                   number
-                                                   class="form-control"
-                                                   :id="'settingsType-' + type.id"
-                                                   v-model="currentAccommodation.room_types_settings[type.id]"
-                                                   min="0">
-                                        </div>
-                                    </div>
-                                </template>
-                            </form>
-                        </validator>
+											</div>
+											<div class="form-group col-sm-6"
+											     v-error-handler="{ value: currentAccommodation.address_one, handle: 'addressone' }">
+												<label for="AccoAddressOne" class="control-label">Address 1</label>
+												<input type="text"
+												       class="form-control"
+												       id="AccoAddressOne"
+												       placeholder=""
+												       v-validate:addressone=""
+												       v-model="currentAccommodation.address_one">
+											</div>
+											<div class="form-group col-sm-6"
+											     v-error-handler="{ value: currentAccommodation.address_two, handle: 'addresstwo' }">
+												<label for="AccoAddressTwo" class="control-label">Address 2</label>
+												<input type="text"
+												       class="form-control"
+												       id="AccoAddressTwo"
+												       placeholder=""
+												       v-validate:addresstwo=""
+												       v-model="currentAccommodation.address_two">
+											</div>
+											<div class="form-group col-sm-4"
+											     v-error-handler="{ value: currentAccommodation.state, handle: 'city' }">
+												<label for="AccoCity" class="control-label">City</label>
+												<input type="text"
+												       class="form-control"
+												       id="AccoCity"
+												       placeholder=""
+												       v-validate:city=""
+												       v-model="currentAccommodation.city">
+											</div>
+											<div class="form-group col-sm-4"
+											     v-error-handler="{ value: currentAccommodation.state, handle: 'state' }">
+												<label for="AccoState" class="control-label">State</label>
+												<input type="text"
+												       class="form-control"
+												       id="AccoState"
+												       placeholder=""
+												       v-validate:state=""
+												       v-model="currentAccommodation.state">
+											</div>
+											<div class="form-group col-sm-4"
+											     v-error-handler="{ value: currentAccommodation.zip, handle: 'zip' }">
+												<label for="AccoZip" class="control-label">Zip</label>
+												<input type="text"
+												       class="form-control"
+												       id="AccoZip"
+												       placeholder=""
+												       v-validate:zip=""
+												       v-model="currentAccommodation.zip">
+											</div>
+											<div class="form-group col-sm-6"
+											     v-error-handler="{ value: currentAccommodation.phone, handle: 'phone' }">
+												<label for="AccoPhone" class="control-label">Phone</label>
+												<input type="text"
+												       class="form-control"
+												       id="AccoPhone"
+												       placeholder=""
+												       v-validate:phone=""
+												       v-model="currentAccommodation.phone">
+											</div>
+											<div class="form-group col-sm-6"
+											     v-error-handler="{ value: currentAccommodation.email, handle: 'email' }">
+												<label for="AccoEmail" class="control-label">Email</label>
+												<input type="email"
+												       class="form-control"
+												       id="AccoEmail"
+												       placeholder=""
+												       v-validate:email="['email']"
+												       v-model="currentAccommodation.email">
+											</div>
+											<div class="form-group col-sm-6"
+											     v-error-handler="{ value: currentAccommodation.fax, handle: 'fax' }">
+												<label for="AccoFax" class="control-label">Fax</label>
+												<input type="text"
+												       class="form-control"
+												       id="AccoFax"
+												       placeholder=""
+												       v-validate:fax=""
+												       v-model="currentAccommodation.fax">
+											</div>
+											<div class="form-group col-sm-6"
+											     v-error-handler="{ value: currentAccommodation.url, handle: 'url' }">
+												<label for="AccoURL" class="control-label">URL</label>
+												<input type="url"
+												       class="form-control"
+												       id="AccoURL"
+												       placeholder=""
+												       v-validate:url=""
+												       v-model="currentAccommodation.url">
+											</div>
+										</div>
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" v-model="currentAccommodationDifferentCountry" >
+												Is this Accommodation in another country?
+											</label>
+										</div>
+										<div class="form-group" v-if="currentAccommodationDifferentCountry">
+											<label for="createPlanCallsign" class="control-label">
+												Region Country
+											</label>
+											<v-select @keydown.enter.prevent=""
+											          class="form-control"
+											          :debounce="250"
+											          :on-search="getCountries"
+											          :value.sync="currentAccommodation.country"
+											          :options="UTILITIES.countries"
+											          label="name"
+											          placeholder="Select a Country">
+											</v-select>
+										</div>
+									</div>
+									<template v-if="currentAccommodation.room_types_settings">
+										<div class="panel-heading">
+											<h5>Rooms Allowed</h5>
+										</div>
+										<div class="panel-body">
+											<div class="form-group col-sm-6" v-for="type in roomTypes">
+												<label :for="'settingsType-' + type.id" class="" v-text="type.name"></label>
+												<input type="number"
+												       number
+												       class="form-control"
+												       :id="'settingsType-' + type.id"
+												       v-model="currentAccommodation.room_types_settings[type.id]"
+												       min="0">
+											</div>
+										</div>
+									</template>
+								</form>
+							</validator>
 					    <div class="panel-footer text-center">
 						    <button type="button"
                                     class="btn btn-default btn-sm"
@@ -555,7 +555,6 @@
                     this.handleAccommodationRoomTypes(_.extend(this.currentAccommodation, newAccommodation));
                     this.currentRegion.accommodations.data.push(newAccommodation);
                     this.accommodations.push(newAccommodation);
-                    this.currentAccommodation = null;
                     this.showAccommodationManageModal = false;
                 }, function (response) {
                     return response;
@@ -625,6 +624,10 @@
                 Promise.all(promises).then(function () {
                     this.$root.$emit('showSuccess', accommodation.name + ' settings updated successfully.');
                     this.getAccommodations();
+                    this.$nextTick(function () {
+                        this.currentAccommodation = null;
+                    });
+
                 }.bind(this));
 	        },
             getAccommodations(){
