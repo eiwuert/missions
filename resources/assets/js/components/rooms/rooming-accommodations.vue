@@ -79,14 +79,11 @@
 								</div>
 							</form>
 							<template v-if="currentAccommodationRooms.length">
-
 								<div class="list-group">
 									<div class="list-group-item"  v-for="room in currentAccommodationRooms" >
 										<h5 class="list-group-item-heading">
 											{{ (room.label ? (room.label + ' - ' + room.type) : room.type) | capitalize }} <span v-if="getRoomLeader(room)"> <small> ({{getRoomLeader(room).given_names}} {{getRoomLeader(room).surname}})</small></span>
 											<span class="pull-right">
-                                                {{ room.occupants_count || 0 }} <i class="fa fa-users"></i>
-												&nbsp;
 												<a @click="removeRoomFromAccommodation(room, currentAccommodation)" class="btn btn-xs btn-default-hollow">
 													<i class="fa fa-minus"></i>
 												</a>
@@ -142,14 +139,14 @@
 				</template>
 				<template v-else>
 					<div class="form-group">
-						<button class="btn btn-default-hollow btn-sm" type="button" @click="selectRegionView = true;">
-                            <i class="fa fa-chevron-left"></i> Change Region
+						<button class="btn btn-default-hollow btn-sm" type="button" @click="selectRegionView = true,currentAccommodation = null">
+							<i class="fa fa-chevron-left"></i> Change Region
                         </button>
 						<hr class="divider">
 					</div>
 					<template v-if="accommodations.length">
 						<accordion :one-at-atime="true">
-							<panel :type="currentAccommodation && currentAccommodation.id === accommodation.id ? 'info' : ''" v-for="accommodation in accommodations">
+							<panel :type="currentAccommodation && currentAccommodation.id === accommodation.id ? 'danger' : ''" v-for="accommodation in accommodations">
 								<div slot="header" class="row">
 									<div class="col-xs-6">
                                         <strong>{{accommodation.name}}</strong>
@@ -157,8 +154,6 @@
                                     </div>
 									<div class="col-xs-4 text-right">
                                         {{accommodation.rooms_count.total}} <i class="fa fa-bed"></i>
-                                        &middot;
-										{{accommodation.occupants_count}} <i class="fa fa-users"></i>
 									</div>
                                     <div class="col-xs-2 text-right">
                                         <button v-show="!currentAccommodation || (currentAccommodation && currentAccommodation.id !== accommodation.id)" class="btn btn-xs btn-default-hollow" @click="currentAccommodation = accommodation">
@@ -188,15 +183,13 @@
 									<div class="col-sm-6">
 										<label>Rooms</label>
 										<div class="small">
-											<ul class="list-unstyled">
-												<li v-for="(key, value) in accommodation.rooms_count">
-													{{key|capitalize}}: {{value}}
-												</li>
-											</ul>
+											<span v-for="(key, val) in accommodation.rooms_count">
+				                            <p style="line-height:1;font-size:11px;margin-bottom:2px;display:inline-block;"><span v-if="$index != 0"> &middot; </span>{{key | capitalize}}: <strong>{{val}}</strong></p>
+				                        </span>
 										</div>
 										<label>Rooms Allowed</label>
 										<div class="small">
-											<span v-for="(key, val) in accommodation.room_types">
+										<span v-for="(key, val) in accommodation.room_types">
 				                            <p style="line-height:1;font-size:11px;margin-bottom:2px;display:inline-block;"><span v-if="$index != 0"> &middot; </span>{{key | capitalize}}: <strong>{{val}}</strong></p>
 				                        </span>
 										</div>
@@ -248,14 +241,13 @@
 										<div class="panel-heading">
 											<div class="panel-title" slot="header">
 												<div class="row">
-													<div class="col-xs-9" role="button" data-toggle="collapse" data-parent="#plansAccordion" :href="'#planItem' + $index" aria-expanded="true" aria-controls="collapseOne">
+													<a :href="'rooming-manager?plan=' + plan.id" target="_blank" class="col-xs-9" role="button">
 														<h5>{{plan.name}}
                                                             <small>
-                                                                {{ plan.rooms_count.total || 0 }} <i class="fa fa-bed"></i> &middot;
-                                                                {{ plan.occupants_count || 0 }} <i class="fa fa-users"></i>
+                                                                {{ plan.rooms_count.total || 0 }} <i class="fa fa-bed"></i>
                                                             </small>
                                                         </h5>
-													</div>
+													</a>
 													<div class="col-xs-3 text-right">
 														<button :disabled="!currentAccommodation" class="btn btn-xs btn-primary-hollow" type="button" @click="addPlanToAccommodation(plan, currentAccommodation)">
 															<i class="fa fa-plus"></i>
@@ -282,7 +274,6 @@
 														<button :disabled="!currentAccommodation" class="btn btn-xs btn-primary-hollow pull-right" type="button" @click="addRoomToAccommodation(room, currentAccommodation)">
 															<i class="fa fa-plus"></i>
 														</button>
-														<span class="text-muted"> &middot; {{ room.occupants_count || 0 }} <i class="fa fa-users"></i></span>
 													</div>
 
 												</div>
