@@ -84,8 +84,6 @@
 										<h5 class="list-group-item-heading">
 											{{ (room.label ? (room.label + ' - ' + room.type) : room.type) | capitalize }} <span v-if="getRoomLeader(room)"> <small> ({{getRoomLeader(room).given_names}} {{getRoomLeader(room).surname}})</small></span>
 											<span class="pull-right">
-                                                <!--{{ room.occupants_count || 0 }} <i class="fa fa-users"></i>-->
-												&nbsp;
 												<a @click="removeRoomFromAccommodation(room, currentAccommodation)" class="btn btn-xs btn-default-hollow">
 													<i class="fa fa-minus"></i>
 												</a>
@@ -142,7 +140,7 @@
 				<template v-else>
 					<div class="form-group">
 						<button class="btn btn-default-hollow btn-sm" type="button" @click="selectRegionView = true,currentAccommodation = null">
-                            <i class="fa fa-chevron-left"></i> Change Region
+							<i class="fa fa-chevron-left"></i> Change Region
                         </button>
 						<hr class="divider">
 					</div>
@@ -156,8 +154,6 @@
                                     </div>
 									<div class="col-xs-4 text-right">
                                         {{accommodation.rooms_count.total}} <i class="fa fa-bed"></i>
-                                        &middot;
-										<!--{{accommodation.occupants_count}} <i class="fa fa-users"></i>-->
 									</div>
                                     <div class="col-xs-2 text-right">
                                         <button v-show="!currentAccommodation || (currentAccommodation && currentAccommodation.id !== accommodation.id)" class="btn btn-xs btn-default-hollow" @click="currentAccommodation = accommodation">
@@ -248,8 +244,7 @@
 													<a :href="'rooming-manager?plan=' + plan.id" target="_blank" class="col-xs-9" role="button">
 														<h5>{{plan.name}}
                                                             <small>
-                                                                {{ plan.rooms_count.total || 0 }} <i class="fa fa-bed"></i> &middot;
-                                                                <!--{{ plan.occupants_count || 0 }} <i class="fa fa-users"></i>-->
+                                                                {{ plan.rooms_count.total || 0 }} <i class="fa fa-bed"></i>
                                                             </small>
                                                         </h5>
 													</a>
@@ -279,7 +274,6 @@
 														<button :disabled="!currentAccommodation" class="btn btn-xs btn-primary-hollow pull-right" type="button" @click="addRoomToAccommodation(room, currentAccommodation)">
 															<i class="fa fa-plus"></i>
 														</button>
-														<!--<span class="text-muted"> &middot; {{ room.occupants_count || 0 }} <i class="fa fa-users"></i></span>-->
 													</div>
 
 												</div>
