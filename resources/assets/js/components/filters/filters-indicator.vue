@@ -3,6 +3,7 @@
 		<hr class="divider sm">
 		<div>
 			<label>Active Filters</label>
+			<!-- Reservations Filters -->
 			<span v-if="propertyExists('type')" style="margin-right:2px;" class="label label-default" v-show="filters.type != ''" @click="filters.type = ''" >
 				Trip Type
 				<i class="fa fa-close"></i>
@@ -77,7 +78,7 @@
 <style></style>
 <script type="text/javascript">
     export default{
-        name: 'reservations-filters-indicator',
+        name: 'filters-indicator',
         props: {
             // Main object that contains all filters used by the parent component for API calls
             filters: {
@@ -85,10 +86,12 @@
                 required: true,
                 default: null
             },
+	        // Needed if reservations filters are in use
 	        requirement: {
                 type: String,
                 default: ''
 	        },
+            // Needed if reservations filters are in use
 	        due: {
                 type: String,
                 default: ''

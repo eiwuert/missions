@@ -138,7 +138,7 @@
                 </form>
             </div>
         </div>
-        <reservations-filters-indicator :filters.sync="filters" :requirement="requirement" :due="due"></reservations-filters-indicator>
+        <filters-indicator :filters.sync="filters" :requirement="requirement" :due="due"></filters-indicator>
         <hr class="divider sm">
 		<div style="position:relative;">
 			<spinner v-ref:spinner size="sm" text="Loading"></spinner>
@@ -298,7 +298,7 @@
 	import vSelect from "vue-select";
 	import exportUtility from '../export-utility.vue';
 	import reservationsFilters from '../filters/reservations-filters.vue';
-	import reservationsFiltersIndicator from '../filters/reservations-filters-indicator.vue';
+	import reservationsFiltersIndicator from '../filters/filters-indicator.vue';
 	import reservationReports from '../admin/reporting/reservation-reports.vue';
 	export default{
 		name: 'admin-reservations-list',
