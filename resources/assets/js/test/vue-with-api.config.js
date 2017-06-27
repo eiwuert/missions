@@ -323,6 +323,9 @@ let RootInstance = {
     },
     data: {
         userId: '',
+        someObject: {},
+        someArray: [],
+        someString: '',
     },
     computed: {
         impersonatedUser() {
