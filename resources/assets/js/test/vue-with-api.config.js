@@ -322,6 +322,7 @@ let RootInstance = {
         }
     },
     data: {
+        isAdminRoute: false,
         userId: '',
         someObject: {},
         someArray: [],
