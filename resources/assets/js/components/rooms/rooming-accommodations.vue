@@ -361,6 +361,7 @@
                 currentAccommodationRooms: [],
                 currentAccommodationRoomsPagination: { current_page: 1 },
                 RegionsResource: this.$resource('campaigns{/campaign}/regions{/region}'),
+                RoomingAccommodationsResource: this.$resource('rooming/accommodations{/accommodation}{/path}{/pathId}'),
                 AccommodationsResource: this.$resource('regions{/region}/accommodations{/accommodation}'),
                 PlansResource: this.$resource('rooming/plans{/plan}'),
             }
@@ -430,39 +431,38 @@
                 this.selectRegionView = false;
 	        },
             addPlanToAccommodation(plan, accommodation) {
-	            this.$http.post('rooming/accommodations/' + accommodation.id + '/plans', { plan_ids: [plan.id] })
+                this.RoomingAccommodationsResource.save({ accommodation: accommodation.id, path: 'plans' }, { plan_ids: [plan.id] })
 		            .then(function (response) {
-                        let listedAccommodation = _.findWhere(this.accommodations, { id: accommodation.id});
-                            _.each(plan.rooms_count, function (count, type) {
-                                console.log(listedAccommodation);
-                                if (listedAccommodation)
-                                    listedAccommodation.rooms_count[type] += count;
-                                accommodation.rooms_count[type] += count
-                            });
-		                this.getCurrentAccommodationRooms();
-                        this.getRoomingPlans();
-		                this.$root.$emit('showSuccess', plan.name + ' successfully added to accommodation.');
-                    });
+                        this.AccommodationsResource
+                            .get({ region: this.currentRegion.id, accommodation: this.currentAccommodation})
+                            .then(function (response) {
+								accommodation = response.body.data;
+                                this.getCurrentAccommodationRooms();
+                                this.getRoomingPlans();
+                                this.$root.$emit('showSuccess', plan.name + ' successfully added to accommodation.');
+                            }, this.$root.handleApiErro);
+
+                    }, this.$root.handleApiError);
             },
             addRoomToAccommodation(room, accommodation) {
-                this.$http.post('rooming/accommodations/' + accommodation.id + '/rooms', { room_ids: [room.id] })
+                this.RoomingAccommodationsResource.save({ accommodation: accommodation.id, path: 'rooms' }, { room_ids: [room.id] })
                     .then(function (response) {
                         accommodation.rooms_count[room.type]++;
                         accommodation.rooms_count.total++;
                         this.getCurrentAccommodationRooms();
                         this.getRoomingPlans();
                         this.$root.$emit('showSuccess', (room.label ? (room.label + ' - ' + room.type) : room.type) + ' successfully added to accommodation.');
-                    })
+                    }, this.$root.handleApiError)
             },
             removeRoomFromAccommodation(room, accommodation) {
-                this.$http.delete('rooming/accommodations/' + accommodation.id + '/rooms/' + room.id)
+                this.RoomingAccommodationsResource.delete({ accommodation: accommodation.id, path: 'rooms', pathId: room.id })
                     .then(function (response) {
                         accommodation.rooms_count[room.type]--;
                         accommodation.rooms_count.total--;
                         this.getCurrentAccommodationRooms();
                         this.getRoomingPlans();
                         this.$root.$emit('showSuccess', (room.label ? (room.label + ' - ' + room.type) : room.type) + ' successfully removed from accommodation.');
-                    })
+                    }, this.$root.handleApiError)
             },
             getAccommodations(){
                 let params = {
@@ -473,10 +473,7 @@
                 return this.AccommodationsResource.get(params).then(function (response) {
                     this.accommodationsPagination = response.body.meta.pagination;
 					return this.accommodations = response.body.data;
-                }, function (response) {
-                    console.log(response);
-                    return response.body.data;
-                });
+                }, this.$root.handleApiError);
             },
             getRegions(){
                 let params = {
@@ -492,10 +489,7 @@
                 return this.RegionsResource.get(params).then(function (response) {
                     this.regionsPagination = response.body.meta.pagination;
                     return this.regions = response.body.data;
-                }, function (response) {
-                    console.log(response);
-                    return response.body.data;
-                });
+                }, this.$root.handleApiError);
             },
             getRoomingPlans(){
                 let params = {
@@ -515,7 +509,7 @@
                     });
                     this.pagination = response.body.meta.pagination;
                     return this.plans = response.body.data;
-                })
+                }, this.$root.handleApiError)
             },
             getRoomingPlansFilter(){
                 let params = {
@@ -531,21 +525,22 @@
                 return this.PlansResource.get(params).then(function (response) {
                     this.pagination = response.body.meta.pagination;
                     this.plans = response.body.data;
-                })
+                }, this.$root.handleApiError)
             },
 	        getRoomLeader(room) {
                 return _.findWhere(room.occupants.data, { room_leader: true });
 	        },
             getGroups(search, loading){
+                let promise;
                 loading ? loading(true) : void 0;
-                let promise = this.$http.get('groups', { params: {search: search} }).then(function (response) {
+                promise = this.$http.get('groups', { params: {search: search} }).then(function (response) {
                     this.groupsOptions = response.body.data;
                     if (loading) {
                         loading(false);
                     } else {
                         return promise;
                     }
-                });
+                }, this.$root.handleApiError);
             },
 	        getAccommodationRooms(accommodation) {
                 let params = {
@@ -558,7 +553,7 @@
                         rooms: response.body.data,
                         pagination: response.body.meta.pagination
                     }
-                });
+                }, this.$root.handleApiError);
 	        },
             getCurrentAccommodationRooms() {
                 let params = {
@@ -576,17 +571,13 @@
                 return this.$http.get('rooming/rooms', { params: params }).then(function (response) {
                     this.currentAccommodationRooms = response.body.data;
                     this.currentAccommodationRoomsPagination = response.body.meta.pagination;
-                });
+                }, this.$root.handleApiError);
 	        },
             getRoomTypes(){
                 return this.$http.get('rooming/types')
                     .then(function (response) {
                             return this.roomTypes = response.body.data;
-                        },
-                        function (response) {
-                            console.log(response);
-                            return response.body.data;
-                        });
+                        }, this.$root.handleApiError);
             },
         },
         ready() {
