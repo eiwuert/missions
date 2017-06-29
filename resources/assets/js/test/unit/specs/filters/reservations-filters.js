@@ -6,37 +6,11 @@ import nextTick from 'p-immediate';
 import test from 'ava';
 
 //load the component with a vue instance
-RootInstance.template = '<div><reservations-filters v-ref:test-component :filters="$root.someObject"></reservations-filters></div>';
+RootInstance.template = '<div><reservations-filters v-ref:test-component :filters="$root.filtersVars.filters" :pagination="$root.filtersVars.pagination" :callback="$root.filtersMethodsCallback" :reset-callback="$root.filtersMethodsReset"></reservations-filters></div>';
 RootInstance.components = {'reservations-filters': require('../../../../components/filters/reservations-filters.vue')};
 document.body.insertAdjacentHTML("afterbegin", "<app></app>");
 const vm = new Vue(RootInstance).$mount('app');
 let ReservationsFilters = vm.$refs.testComponent;
-
-vm.someObject = {
-    type: '',
-    //tags: [],
-    user: [],
-    groups: [],
-    campaign: null,
-    gender: '',
-    status: '',
-    shirtSize: [],
-    hasCompanions: null,
-    due: '',
-    todoName: '',
-    todoStatus: null,
-    designation: '',
-    requirementName: '',
-    requirementStatus: '',
-    dueName: '',
-    dueStatus: '',
-    rep: '',
-    age: [0, 120],
-    minPercentRaised: '',
-    maxPercentRaised: '',
-    minAmountRaised: '',
-    maxAmountRaised: ''
-};
 
 test('', t => {
 
