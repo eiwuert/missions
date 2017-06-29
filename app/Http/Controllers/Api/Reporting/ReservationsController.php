@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Api\Reporting;
 
-use App\Http\Requests;
 use App\Models\v1\User;
 use Illuminate\Http\Request;
-use App\Models\v1\Reservation;
 use App\Http\Controllers\Controller;
 use App\Jobs\Reports\Reservations\BasicReport;
 use App\Jobs\Reports\Reservations\FundsReport;
@@ -14,12 +12,10 @@ use App\Jobs\Reports\Reservations\RequirementsReport;
 
 class ReservationsController extends Controller
 {
-    protected $reservation;
     protected $user;
     
-    function __construct(Reservation $reservation, User $user)
+    function __construct(User $user)
     {
-        $this->reservation = $reservation;
         $this->user = $user;
     }
 

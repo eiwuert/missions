@@ -236,6 +236,7 @@ $api->version('v1', [
     $api->group(['prefix' => 'reports'], function($api)
     {
         $api->post('reservations/{type}', 'Reporting\ReservationsController@store');
+        $api->post('{type}/rooms', 'Reporting\RoomsController@store');
     });
 
     /*
