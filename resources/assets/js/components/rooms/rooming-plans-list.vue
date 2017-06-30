@@ -162,6 +162,15 @@
 								<input type="number" number class="form-control" :id="'settingsType-' + type.id" v-model="selectedPlanSettings[type.id]" min="0">
 							</div>
 						</div>
+
+						<div class="form-group">
+							<label class="">Locked</label>
+							<select v-if="isAdminRoute" class="form-control" v-model="selectedPlanSettings.locked">
+								<option :value="true">Yes</option>
+								<option :value="false">No</option>
+							</select>
+							<!--<p v-else v-text="selectedPlanSettings.locked ? 'Yes' : 'No'"></p>-->
+						</div>
 					</form>
 				</validator>
 

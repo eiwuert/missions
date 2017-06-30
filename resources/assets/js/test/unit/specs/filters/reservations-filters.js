@@ -12,6 +12,14 @@ document.body.insertAdjacentHTML("afterbegin", "<app></app>");
 const vm = new Vue(RootInstance).$mount('app');
 let ReservationsFilters = vm.$refs.testComponent;
 
-test('', t => {
+test.before('set filter values', () => {
+    ReservationsFilters.shirtSizeArr = ReservationsFilters.shirtSizeOptions[0];
+    ReservationsFilters.campaignObj = ReservationsFilters.campaignOptions[0];
 
+});
+test('check filter values', (t) => {
+    // await nextTick();
+    // console.log(ReservationsFilters.filters.shirtSize);
+    t.is(ReservationsFilters.filters.campaign, ReservationsFilters.campaignOptions[0].id);
+    // t.true(ReservationsFilters.filters.shirtSize[0] === 'XS');
 });

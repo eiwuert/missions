@@ -437,6 +437,31 @@ let RootInstance = {
             console.log('callback function called');
         },
         filtersMethodsReset(){
+            this.filterVars.filters = {
+                type: '',
+                //tags: [],
+                user: [],
+                groups: [],
+                campaign: null,
+                gender: '',
+                status: '',
+                shirtSize: [],
+                hasCompanions: null,
+                due: '',
+                todoName: '',
+                todoStatus: null,
+                designation: '',
+                requirementName: '',
+                requirementStatus: '',
+                dueName: '',
+                dueStatus: '',
+                rep: '',
+                age: [0, 120],
+                minPercentRaised: '',
+                maxPercentRaised: '',
+                minAmountRaised: '',
+                maxAmountRaised: ''
+            }
             console.log('reset callback function called');
         },
 
