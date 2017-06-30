@@ -67,8 +67,7 @@
 							<div class="col-sm-12">
 								<label>Region Squads <span v-if="currentRegion.teams" class="badge badge-primary" v-text="currentRegion.teams.data.length"></span></label>
 								<hr class="divider sm">
-								<template v-if="currentRegion.teams.data.length">
-
+								<template v-if="currentRegion.teams && currentRegion.teams.data.length">
 									<div class="list-group">
 										<div class="list-group-item" v-for="team in currentRegion.teams.data">
 											<div class="row list-group-item-heading">
