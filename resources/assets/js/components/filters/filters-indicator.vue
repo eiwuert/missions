@@ -85,23 +85,35 @@
                 type: Object,
                 required: true,
                 default: null
-            },
-	        // Needed if reservations filters are in use
-	        requirement: {
-                type: String,
-                default: ''
-	        },
-            // Needed if reservations filters are in use
-	        due: {
-                type: String,
-                default: ''
-	        },
+            }
         },
         data(){
             return {
-                msg: null
+
             }
         },
+	    watch:{
+            'requirement': function () {
+                if (this.filters.requirementName) {
+                    if (this.filters.requirementName && this.filters.requirementStatus)
+                        return this.filters.requirementName + '|' + this.filters.requirementStatus;
+
+                    return this.filters.requirementName;
+                }
+
+                return ''
+            },
+            'due': function () {
+                if (this.filters.dueName) {
+                    if (this.filters.dueStatus)
+                    return this.filters.dueName + '|' + this.filters.dueStatus;
+
+                    return this.filters.dueName;
+                }
+
+                return ''
+            }
+	    },
         methods: {
             propertyExists(property) {
                 // Instead of concerning the filters component about where it is

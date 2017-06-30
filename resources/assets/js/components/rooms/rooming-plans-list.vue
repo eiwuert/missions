@@ -38,10 +38,7 @@
 						<button class="btn btn-primary btn-sm" type="button" @click="openNewPlanModal">
 							Create a plan
 						</button>
-                        <export-utility url="rooming/plans/export"
-                                        :options="exportOptions"
-                                        :filters="exportFilters">
-                        </export-utility>
+						<rooming-reports :filters="filters" :search="search" :campaign="campaignId"></rooming-reports>
 					</form>
 				</div>
 			</div>
@@ -165,6 +162,15 @@
 								<input type="number" number class="form-control" :id="'settingsType-' + type.id" v-model="selectedPlanSettings[type.id]" min="0">
 							</div>
 						</div>
+
+						<div class="form-group">
+							<label class="">Locked</label>
+							<select v-if="isAdminRoute" class="form-control" v-model="selectedPlanSettings.locked">
+								<option :value="true">Yes</option>
+								<option :value="false">No</option>
+							</select>
+							<!--<p v-else v-text="selectedPlanSettings.locked ? 'Yes' : 'No'"></p>-->
+						</div>
 					</form>
 				</validator>
 
@@ -185,9 +191,10 @@
     import _ from 'underscore';
     import vSelect from 'vue-select';
     import exportUtility from '../export-utility.vue';
+    import roomingReports from '../admin/reporting/rooming-reports.vue';
     export default{
         name: 'rooming-plans-list',
-	    components: {vSelect, exportUtility},
+	    components: {vSelect, exportUtility, roomingReports},
         props: {
             userId: {
                 type: String,
@@ -267,7 +274,7 @@
                 this.$dispatch('rooming-wizard:plan-selected', plan);
             },
             getRoomTypes(){
-                return this.$http.get('rooming/types')
+                return this.$http.get('rooming/types', { params: { campaign: this.campaignId }})
 	                .then(function (response) {
                         return this.roomTypes = response.body.data;
                     },
