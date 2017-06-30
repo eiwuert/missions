@@ -404,7 +404,7 @@
                     } else {
                         return promise;
                     }
-                });
+                }, this.$root.handleApiError);
             },
             getCampaigns(search, loading){
                 loading ? loading(true) : void 0;
@@ -415,7 +415,7 @@
                     } else {
                         return promise;
                     }
-                });
+                }, this.$root.handleApiError);
             },
             getUsers(search, loading){
                 loading ? loading(true) : void 0;
@@ -426,7 +426,7 @@
                     } else {
                         return promise;
                     }
-                });
+                }, this.$root.handleApiError);
             },
             getTodos(){
                 return this.$http.get('todos', { params: {
@@ -435,7 +435,7 @@
                     'unique': true
                 }}).then(function (response) {
                     this.todoOptions = _.uniq(_.pluck(response.body.data, 'task'));
-                });
+                }, this.$root.handleApiError);
             },
             getReps(){
                 return this.$http.get('users', { params: {
@@ -443,7 +443,7 @@
                     'per_page': 100
                 }}).then(function (response) {
                     this.repOptions = response.body.data;
-                });
+                }, this.$root.handleApiError);
             },
             getRequirements(){
                 return this.$http.get('requirements', { params: {
@@ -452,7 +452,7 @@
                     'unique': true
                 }}).then(function (response) {
                     this.requirementOptions = _.uniq(_.pluck(response.body.data, 'name'));
-                });
+                }, this.$root.handleApiError);
             },
             getCosts(){
                 return this.$http.get('costs', { params: {
@@ -461,7 +461,7 @@
                     'unique': true
                 }}).then(function (response) {
                     this.dueOptions = _.uniq(_.pluck(response.body.data, 'name'));
-                });
+                }, this.$root.handleApiError);
             }
 
         },

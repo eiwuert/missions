@@ -11,15 +11,23 @@ RootInstance.components = {'reservations-filters': require('../../../../componen
 document.body.insertAdjacentHTML("afterbegin", "<app></app>");
 const vm = new Vue(RootInstance).$mount('app');
 let ReservationsFilters = vm.$refs.testComponent;
+test('property exists', t => {
+    t.true(ReservationsFilters.propertyExists('type'));
+});
 
 test.before('set filter values', () => {
     ReservationsFilters.shirtSizeArr = ReservationsFilters.shirtSizeOptions[0];
     ReservationsFilters.campaignObj = ReservationsFilters.campaignOptions[0];
-
 });
-test('check filter values', (t) => {
-    // await nextTick();
-    // console.log(ReservationsFilters.filters.shirtSize);
+
+test('check filter values', async (t) => {
+    await nextTick();
     t.is(ReservationsFilters.filters.campaign, ReservationsFilters.campaignOptions[0].id);
-    // t.true(ReservationsFilters.filters.shirtSize[0] === 'XS');
+});
+
+test('reset filters', async t => {
+    await nextTick();
+    vm.filtersMethodsReset();
+    await nextTick();
+    t.is(ReservationsFilters.filters.campaign, null);
 });
