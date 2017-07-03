@@ -5,9 +5,9 @@
 			<form class="col-sm-12">
 				<div class="form-group">
 					<label>Travel Group</label>
-					<v-select @keydown.enter.prevent=""  class="form-control" id="groupFilter" :debounce="250" :on-search="getGroups"
-					          :value.sync="filters.group" :options="groupsOptions" label="name"
-					          placeholder="Filter by Group"></v-select>
+					<v-select @keydown.enter.prevent=""  class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
+					          :value.sync="filters.groups" :options="groupsOptions" label="name"
+					          placeholder="Filter by Groups"></v-select>
 				</div>
 
 				<hr class="divider inv sm">
@@ -236,7 +236,7 @@
                 campaignsOptions: [],
                 roomTypes: [],
 	            filters: {
-		            group: null,
+		            groups: null,
 	            },
                 pagination: {current_page: 1},
                 showPlanSettingsModal: false,
@@ -306,7 +306,7 @@
                     include: '',
                 };
                 params = _.extend(params, {
-                    group: this.filters.group ? this.filters.group.id : null,
+                    groups: _.pluck(this.filters.groups, 'id'),
 	                search: this.search,
 	                per_page: this.per_page,
 					page: this.pagination.current_page,
@@ -318,7 +318,7 @@
 					params.campaign = this.campaignId;
                 } else {
                     params.campaign = this.campaignId;
-                    params.group = this.groupId;
+                    params.groupd = [this.groupId];
 
                 }
                 this.exportFilters = params;
