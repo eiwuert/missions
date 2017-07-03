@@ -29,9 +29,11 @@ class RoomingPlanFilter extends Filter
         return $this->where('campaign_id', $id);
     }
 
-    public function group($id)
+    public function groups(array $ids)
     {
-        return $this->where('group_id', $id);
+        return $this->whereHas('groups', function ($query) use ($ids) {
+            $query->whereIn('id', $ids);
+        });
     }
 
     public function notInUse()

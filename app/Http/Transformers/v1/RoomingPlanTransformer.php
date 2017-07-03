@@ -65,9 +65,9 @@ class RoomingPlanTransformer extends TransformerAbstract
 
     public function includeGroups(RoomingPlan $plan)
     {
-        $groups = $plan->groups;
+        $group = $plan->groups;
 
-        return $this->collection($groups, new GroupTransformer);
+        return $this->collection($group, new GroupTransformer);
     }
 
     private function validateParams($params)
