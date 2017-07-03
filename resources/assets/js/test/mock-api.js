@@ -3843,7 +3843,120 @@ export default {
         switch (request.params.type) {
             case 'avatar':
             default:
-                body = {"data":[{"id":"90fd1c9a-78f1-4d2a-907d-31dbda79211e","source":"https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-white-400x400.jpg","name":"1n1d17_white","type":"avatar","meta":null,"created_at":"2017-06-14 23:50:59","updated_at":"2017-06-14 23:50:59","tags":[],"links":[{"rel":"self","uri":"\/uploads\/90fd1c9a-78f1-4d2a-907d-31dbda79211e"}]},{"id":"23615728-e37b-4559-bfff-62789f5c62e1","source":"https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg","name":"a","type":"avatar","meta":null,"created_at":"2017-06-14 23:51:21","updated_at":"2017-06-14 23:51:21","tags":[],"links":[{"rel":"self","uri":"\/uploads\/23615728-e37b-4559-bfff-62789f5c62e1"}]},{"id":"5ec67a1f-bcf8-4578-8f9b-0402a308e624","source":"https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg","name":"a","type":"avatar","meta":null,"created_at":"2017-06-14 23:52:40","updated_at":"2017-06-14 23:52:40","tags":[],"links":[{"rel":"self","uri":"\/uploads\/5ec67a1f-bcf8-4578-8f9b-0402a308e624"}]},{"id":"84633065-1975-4779-8309-b6b1e755782a","source":"https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg","name":"a","type":"avatar","meta":null,"created_at":"2017-06-14 23:51:15","updated_at":"2017-06-14 23:51:15","tags":[],"links":[{"rel":"self","uri":"\/uploads\/84633065-1975-4779-8309-b6b1e755782a"}]},{"id":"94c1b1c1-ae1c-4c83-ad0d-152eac4bf4cc","source":"https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg","name":"a","type":"avatar","meta":null,"created_at":"2017-06-14 23:52:48","updated_at":"2017-06-14 23:52:48","tags":[],"links":[{"rel":"self","uri":"\/uploads\/94c1b1c1-ae1c-4c83-ad0d-152eac4bf4cc"}]},{"id":"ea875a73-9a2c-4cfb-a010-27186c65d11e","source":"https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg","name":"a","type":"avatar","meta":null,"created_at":"2017-06-14 23:51:01","updated_at":"2017-06-14 23:51:01","tags":[],"links":[{"rel":"self","uri":"\/uploads\/ea875a73-9a2c-4cfb-a010-27186c65d11e"}]},{"id":"0a32f560-dcb1-4129-9a20-1714eec8448a","source":"https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-white-400x400.jpg","name":"ab","type":"avatar","meta":null,"created_at":"2017-06-14 23:52:29","updated_at":"2017-06-14 23:52:29","tags":[],"links":[{"rel":"self","uri":"\/uploads\/0a32f560-dcb1-4129-9a20-1714eec8448a"}]},{"id":"235ed5ce-46ad-4d6e-bcc4-6d6d9be867c8","source":"https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg","name":"ab","type":"avatar","meta":null,"created_at":"2017-06-14 23:51:12","updated_at":"2017-06-14 23:51:12","tags":[],"links":[{"rel":"self","uri":"\/uploads\/235ed5ce-46ad-4d6e-bcc4-6d6d9be867c8"}]},{"id":"6cbb03dc-abf1-4d65-a9a2-a662f719d17b","source":"https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg","name":"ab","type":"avatar","meta":null,"created_at":"2017-06-14 23:52:44","updated_at":"2017-06-14 23:52:44","tags":[],"links":[{"rel":"self","uri":"\/uploads\/6cbb03dc-abf1-4d65-a9a2-a662f719d17b"}]},{"id":"6e593928-716f-4fff-bb37-dcb12716c6de","source":"https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg","name":"ab","type":"avatar","meta":null,"created_at":"2017-06-14 23:51:07","updated_at":"2017-06-14 23:51:07","tags":[],"links":[{"rel":"self","uri":"\/uploads\/6e593928-716f-4fff-bb37-dcb12716c6de"}]}],"meta":{"pagination":{"total":1659,"count":10,"per_page":10,"current_page":1,"total_pages":166,"links":{"next":"https:\/\/missions.dev\/api\/uploads?page=2"}}}};
+                body = {
+                    "data": [
+                        {
+                        "id": "90fd1c9a-78f1-4d2a-907d-31dbda79211e",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-white-400x400.jpg",
+                        "name": "1n1d17_white",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:50:59",
+                        "updated_at": "2017-06-14 23:50:59",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/90fd1c9a-78f1-4d2a-907d-31dbda79211e"}]
+                    }, {
+                        "id": "23615728-e37b-4559-bfff-62789f5c62e1",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg",
+                        "name": "a",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:51:21",
+                        "updated_at": "2017-06-14 23:51:21",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/23615728-e37b-4559-bfff-62789f5c62e1"}]
+                    }, {
+                        "id": "5ec67a1f-bcf8-4578-8f9b-0402a308e624",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg",
+                        "name": "a",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:52:40",
+                        "updated_at": "2017-06-14 23:52:40",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/5ec67a1f-bcf8-4578-8f9b-0402a308e624"}]
+                    }, {
+                        "id": "84633065-1975-4779-8309-b6b1e755782a",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg",
+                        "name": "a",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:51:15",
+                        "updated_at": "2017-06-14 23:51:15",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/84633065-1975-4779-8309-b6b1e755782a"}]
+                    }, {
+                        "id": "94c1b1c1-ae1c-4c83-ad0d-152eac4bf4cc",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg",
+                        "name": "a",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:52:48",
+                        "updated_at": "2017-06-14 23:52:48",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/94c1b1c1-ae1c-4c83-ad0d-152eac4bf4cc"}]
+                    }, {
+                        "id": "ea875a73-9a2c-4cfb-a010-27186c65d11e",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg",
+                        "name": "a",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:51:01",
+                        "updated_at": "2017-06-14 23:51:01",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/ea875a73-9a2c-4cfb-a010-27186c65d11e"}]
+                    }, {
+                        "id": "0a32f560-dcb1-4129-9a20-1714eec8448a",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-white-400x400.jpg",
+                        "name": "ab",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:52:29",
+                        "updated_at": "2017-06-14 23:52:29",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/0a32f560-dcb1-4129-9a20-1714eec8448a"}]
+                    }, {
+                        "id": "235ed5ce-46ad-4d6e-bcc4-6d6d9be867c8",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg",
+                        "name": "ab",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:51:12",
+                        "updated_at": "2017-06-14 23:51:12",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/235ed5ce-46ad-4d6e-bcc4-6d6d9be867c8"}]
+                    }, {
+                        "id": "6cbb03dc-abf1-4d65-a9a2-a662f719d17b",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg",
+                        "name": "ab",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:52:44",
+                        "updated_at": "2017-06-14 23:52:44",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/6cbb03dc-abf1-4d65-a9a2-a662f719d17b"}]
+                    }, {
+                        "id": "6e593928-716f-4fff-bb37-dcb12716c6de",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg",
+                        "name": "ab",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:51:07",
+                        "updated_at": "2017-06-14 23:51:07",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/6e593928-716f-4fff-bb37-dcb12716c6de"}]
+                    }],
+                    "meta": {
+                        "pagination": {
+                            "total": 1659,
+                            "count": 10,
+                            "per_page": 10,
+                            "current_page": 1,
+                            "total_pages": 166,
+                            "links": {"next": "https:\/\/missions.dev\/api\/uploads?page=2"}
+                        }
+                    }
+                };
                 break;
             case 'banner':
                 body = {
@@ -3942,6 +4055,27 @@ export default {
             delay: Settings.delay, // millisecond
         }
 
+    },
+    ['POST *uploads(/:upload)'] (pathMatch, query, request) {
+        let body = {
+            "id": "b4da362f-2524-4eb7-abaa-8aceb6fdd618",
+            "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-white-400x400.jpg",
+            "name": request.body.name || "1n1d17_white",
+            "type": request.body.type || "avatar",
+            "meta": null,
+            "created_at": "2017-06-14 23:50:59",
+            "updated_at": "2017-06-14 23:50:59",
+            "tags": request.body.tags || [],
+            "links": [{"rel": "self", "uri": "\/uploads\/90fd1c9a-78f1-4d2a-907d-31dbda79211e"}]
+        };
+
+        return {
+            body: body,
+                status: 200,
+                statusText: 'OK',
+                headers: {/*headers*/},
+            delay: Settings.delay, // millisecond
+        }
     },
 
     // Utilities API

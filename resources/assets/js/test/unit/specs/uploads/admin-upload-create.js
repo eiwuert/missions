@@ -16,4 +16,11 @@ test('uploads populated', t => {
     t.notDeepEqual(AdminUploader.uploads, []);
 });
 
-test.todo('test submit');
+test.todo('submit upload', t => {
+    AdminUploader.name = 'Upload Test';
+    AdminUploader.type = 'avatar';
+    AdminUploader.name = ['User'];
+    AdminUploader.url = 'some/url';
+
+    AdminUploader.submit()
+});

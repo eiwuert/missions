@@ -370,7 +370,7 @@
 	        handleRoomTypeSettings(plan, settings, promises) {
                 _.each(settings, function (val, property) {
                     let promise;
-                    if (property.indexOf('_method') === -1 && !_.contains(['short_desc', 'name'], property)) {
+                    if (property.indexOf('_method') === -1 && !_.contains(['short_desc', 'name', 'groups', 'group_ids'], property)) {
                         if (settings[property + '_method'] === 'PUT') {
                             if (val > 0) {
                                 promise = this.PlansResource.update({
@@ -404,12 +404,15 @@
 	        },
             updatePlanSettings() {
                 let promises = [];
+                let settingsData = _.extend({}, this.selectedPlanSettings);
+                settingsData.group_ids = _.pluck(settingsData.groups, 'id');
+                delete settingsData.groups;
 
                 // update name and short_desc properties
 	            promises.push(this.PlansResource.update({ plan: this.selectedPlan.id},
-		            { name: this.selectedPlanSettings.name, short_desc: this.selectedPlanSettings.short_desc}));
+		            { name: settingsData.name, short_desc: settingsData.short_desc, group_ids: settingsData.group_ids}));
 
-	            this.handleRoomTypeSettings(this.selectedPlan, this.selectedPlanSettings, promises);
+	            this.handleRoomTypeSettings(this.selectedPlan, settingsData, promises);
 
                 Promise.all(promises).then(function () {
                     this.showPlanSettingsModal = false;
@@ -461,7 +464,8 @@
                 let data = _.extend({}, this.selectedNewPlan);
                 let room_types_settings = _.extend({}, data.room_types_settings);
                 delete data.room_types_settings;
-                delete data.group;
+                data.group_ids = _.pluck(data.groups, 'id');
+                delete data.groups;
 
                 if (this.$PlanCreate.valid) {
                     return this.PlansResource.save(data, { include: 'group' }).then(function (response) {
