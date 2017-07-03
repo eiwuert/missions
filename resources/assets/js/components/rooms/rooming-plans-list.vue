@@ -121,11 +121,11 @@
 						</div>
 
 						<div class="form-group" :class="{'has-error': $PlanCreate.teamgroup.invalid}" v-if="isAdminRoute">
-							<label>Travel Group</label>
-							<v-select @keydown.enter.prevent="" class="form-control" id="groupFilter" :debounce="250" :on-search="getGroups"
-							          :value.sync="selectedNewPlan.group" :options="groupsOptions" label="name"
-							          placeholder="Assign Travel Group"></v-select>
-							<select class="hidden" v-model="selectedNewPlan.group" v-validate:teamgroup="['required']">
+							<label>Travel Groups</label>
+							<v-select @keydown.enter.prevent="" class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
+							          :value.sync="selectedNewPlan.groups" :options="groupsOptions" label="name"
+							          placeholder="Assign Travel Groups"></v-select>
+							<select class="hidden" v-model="selectedNewPlan.groups" multiple v-validate:teamgroup="['required']">
 								<option :value="group" v-for="group in groupsOptions">{{group.name | capitalize}}</option>
 							</select>
 						</div>
@@ -154,6 +154,16 @@
 						<div class="form-group" :class="{'has-error': $PlanSettings.plandesc.invalid}">
 							<label for="updatePlanDesc" class="control-label">Short Description</label>
 							<textarea autosize="selectedPlanSettings.short_desc" class="form-control" id="updatePlanDesc" v-model="selectedPlanSettings.short_desc" v-validate:plandesc="['required']"></textarea>
+						</div>
+
+						<div class="form-group" :class="{'has-error': $PlanSettings.teamgroup.invalid}" v-if="isAdminRoute">
+							<label>Travel Groups</label>
+							<v-select @keydown.enter.prevent="" class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
+							          :value.sync="selectedPlanSettings.groups" :options="groupsOptions" label="name"
+							          placeholder="Assign Travel Groups"></v-select>
+							<select class="hidden" v-model="selectedPlanSettings.groups" multiple v-validate:teamgroup="['required']">
+								<option :value="group" v-for="group in groupsOptions">{{group.name | capitalize}}</option>
+							</select>
 						</div>
 
 						<div class="form-group" v-for="type in roomTypes">
@@ -233,7 +243,8 @@
                     rooms: [],
                     locked: false,
                     campaign_id: this.$parent.campaignId,
-                    group_id: this.$parent.groupId,
+                    groups: [],
+                    group_ids: [this.$parent.groupId],
                     room_types_settings: {},
                 },
 	            selectedPlan: null,
@@ -248,6 +259,7 @@
                     updated_at: 'Updated At'
                 },
                 exportFilters: {},
+
             }
         },
 	    watch: {
@@ -472,6 +484,9 @@
                     this.$root.$emit('showError', 'Please provide a name for the new plan');
                 }
             },
+	        handlePlanGroupAssociations(){
+
+	        },
         },
         ready(){
             if (this.isAdminRoute) {
