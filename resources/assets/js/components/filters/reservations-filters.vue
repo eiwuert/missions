@@ -75,7 +75,7 @@
 				</div>
 
 				<!-- Cost/Payments -->
-				<template v-if="!teams && !rooms && propertyExists('dueName')">
+				<template v-if="!teams && propertyExists('dueName')">
 					<div class="form-group">
 						<label>Applied Cost</label>
 						<select class="form-control input-sm" v-model="filters.dueName" style="width:100%;">

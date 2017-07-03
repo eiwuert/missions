@@ -434,7 +434,7 @@
                 this.RoomingAccommodationsResource.save({ accommodation: accommodation.id, path: 'plans' }, { plan_ids: [plan.id] })
 		            .then(function (response) {
                         this.AccommodationsResource
-                            .get({ region: this.currentRegion.id, accommodation: this.currentAccommodation})
+                            .get({ region: this.currentRegion.id, accommodation: this.currentAccommodation.id})
                             .then(function (response) {
 								accommodation = response.body.data;
                                 this.getCurrentAccommodationRooms();
