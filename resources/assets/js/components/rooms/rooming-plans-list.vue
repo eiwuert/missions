@@ -5,9 +5,9 @@
 			<form class="col-sm-12">
 				<div class="form-group">
 					<label>Travel Group</label>
-					<v-select @keydown.enter.prevent=""  class="form-control" id="groupFilter" :debounce="250" :on-search="getGroups"
-					          :value.sync="filters.group" :options="groupsOptions" label="name"
-					          placeholder="Filter by Group"></v-select>
+					<v-select @keydown.enter.prevent=""  class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
+					          :value.sync="filters.groups" :options="groupsOptions" label="name"
+					          placeholder="Filter by Groups"></v-select>
 				</div>
 
 				<hr class="divider inv sm">
@@ -66,7 +66,13 @@
                         <h4 class="list-group-item-heading">
                             <a @click="loadManager(plan)">{{ plan.name }}</a>
                             <span class="badge">{{ plan.occupants_count }} occupants</span>
-                            <br /><small>{{ plan.group.data.name }}</small>
+                            <br />
+	                        <small>
+		                        <template v-for="group in plan.groups.data">
+			                        {{ group.name }}
+			                        <template v-if="($index + 1) < plan.groups.data.length">&middot;</template>
+		                        </template>
+	                        </small>
                         </h4>
                         <p class="list-group-item-text">{{ plan.short_desc }}</p>
                     </div>
@@ -230,7 +236,7 @@
                 campaignsOptions: [],
                 roomTypes: [],
 	            filters: {
-		            group: null,
+		            groups: null,
 	            },
                 pagination: {current_page: 1},
                 showPlanSettingsModal: false,
@@ -300,19 +306,19 @@
                     include: '',
                 };
                 params = _.extend(params, {
-                    group: this.filters.group ? this.filters.group.id : null,
+                    groups: _.pluck(this.filters.groups, 'id'),
 	                search: this.search,
 	                per_page: this.per_page,
 					page: this.pagination.current_page,
 					sort: 'created_at|desc',
-                    include: 'group'
+                    include: 'groups'
                 });
                 
                 if (this.isAdminRoute) {
 					params.campaign = this.campaignId;
                 } else {
                     params.campaign = this.campaignId;
-                    params.group = this.groupId;
+                    params.groupd = [this.groupId];
 
                 }
                 this.exportFilters = params;
@@ -350,6 +356,7 @@
                 let settings = {
                     short_desc: plan.short_desc,
                     name: plan.name,
+	                groups: plan.groups.data,
                 };
 
                 // We need to loop through each room type to create an object to reference the plan types present

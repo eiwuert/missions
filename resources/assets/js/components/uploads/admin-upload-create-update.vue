@@ -453,7 +453,7 @@
 					    params.type = 'other';
 					}
 
-                    this.resource.save(null, params).then(function (resp) {
+                    return this.resource.save(null, params).then(function (resp) {
 						this.handleSuccess(resp)
                     }, function (error) {
                         this.errors = error.data.errors;
