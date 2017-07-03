@@ -66,7 +66,13 @@
                         <h4 class="list-group-item-heading">
                             <a @click="loadManager(plan)">{{ plan.name }}</a>
                             <span class="badge">{{ plan.occupants_count }} occupants</span>
-                            <br /><small>{{ plan.group.data.name }}</small>
+                            <br />
+	                        <small>
+		                        <template v-for="group in plan.groups.data">
+			                        {{ group.name }}
+			                        <template v-if="($index + 1) < plan.groups.data.length">&middot;</template>
+		                        </template>
+	                        </small>
                         </h4>
                         <p class="list-group-item-text">{{ plan.short_desc }}</p>
                     </div>
@@ -305,7 +311,7 @@
 	                per_page: this.per_page,
 					page: this.pagination.current_page,
 					sort: 'created_at|desc',
-                    include: 'group'
+                    include: 'groups'
                 });
                 
                 if (this.isAdminRoute) {
@@ -350,6 +356,7 @@
                 let settings = {
                     short_desc: plan.short_desc,
                     name: plan.name,
+	                groups: plan.groups.data,
                 };
 
                 // We need to loop through each room type to create an object to reference the plan types present

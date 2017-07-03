@@ -87,7 +87,12 @@
 			<template v-if="currentPlan">
 				<div class="col-xs-12" v-if="currentPlan">
 					<h3>{{ currentPlan.name }} <button type="button" class="btn btn-xs btn-primary" @click="changePlan">Change Plan</button></h3>
-					<h5>{{ currentPlan.group.data.name }}</h5>
+					<h5>
+						<template v-for="group in currentPlan.groups.data">
+							{{ group.name }}
+							<template v-if="($index + 1) < currentPlan.groups.data.length">&middot;</template>
+						</template>
+					</h5>
 					<hr class="divider lg">
 				</div>
 				<div class="col-sm-8">
@@ -890,7 +895,7 @@
                 if (_.isObject(this.reservationFilters.role)) {
                     params.role = this.reservationFilters.role.value;
                 }
-                params.groups = new Array(this.currentPlan.group.data.id);
+                params.groups = new Array(this.currentPlan.groups.data.id);
 	            if (this.reservationFilters.groups.length)
                     params.groups = _.union(params.groups, _.pluck(this.reservationFilters.groups, 'id'));
 
