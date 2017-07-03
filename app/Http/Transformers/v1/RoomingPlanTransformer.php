@@ -15,7 +15,7 @@ class RoomingPlanTransformer extends TransformerAbstract
      *
      * @var array
      */
-    protected $availableIncludes = ['rooms', 'group'];
+    protected $availableIncludes = ['rooms', 'groups'];
 
     public function transform(RoomingPlan $plan)
     {
@@ -63,11 +63,11 @@ class RoomingPlanTransformer extends TransformerAbstract
         return $this->collection($rooms, new RoomTransformer);
     }
 
-    public function includeGroup(RoomingPlan $plan)
+    public function includeGroups(RoomingPlan $plan)
     {
-        $group = $plan->group;
+        $group = $plan->groups;
 
-        return $this->item($group, new GroupTransformer);
+        return $this->collection($group, new GroupTransformer);
     }
 
     private function validateParams($params)
