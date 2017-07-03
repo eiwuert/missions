@@ -1745,110 +1745,122 @@ export default {
 
     // Groups API
     ['GET *groups(/:group)'] (pathMatch, query, request) {
-        let body = [
-            {
-                "id": "043cddec-f698-39eb-874f-3de45e0ac0eb",
-                "status": "approved",
-                "name": "Kuvalis, Mraz and Hammes",
-                "type": "youth",
-                "timezone": "America\/Los_Angeles",
-                "description": "Alice. 'That's the first to speak. 'What size do you mean by that?' said the Mock Turtle angrily: 'really you are very.",
-                "url": "kuvalis-mraz-and-hammes",
-                "public": true,
-                "address_one": "462 Alfreda Islands",
-                "address_two": "556",
-                "city": null,
-                "state": "California",
-                "zip": "64577",
-                "country_code": "ir",
-                "country_name": "Iran (Islamic Republic of)",
-                "phone_one": "4102237069",
-                "phone_two": "",
-                "email": "stehr.zoila@example.org",
-                "avatar": "https:\/\/missions.dev\/images\/placeholders\/logo-placeholder.png",
-                "banner": null,
-                "reservations_count": 75,
-                "created_at": "2017-06-14 23:50:59",
-                "updated_at": "2017-06-15 00:00:14",
-                "links": [{"rel": "self", "uri": "\/groups\/043cddec-f698-39eb-874f-3de45e0ac0eb"}]
-            }, {
-                "id": "10d394ba-3d88-3392-a19d-113f3aa7b565",
-                "status": "approved",
-                "name": "Herman-O'Hara",
-                "type": "youth",
-                "timezone": "Indian\/Mauritius",
-                "description": "Tortoise--' 'Why did you manage to do next, when suddenly a White Rabbit cried out, 'Silence in the direction in which.",
-                "url": "herman-ohara",
-                "public": true,
-                "address_one": null,
-                "address_two": "85737",
-                "city": "Montanachester",
-                "state": "Oklahoma",
-                "zip": null,
-                "country_code": "uz",
-                "country_name": "Uzbekistan",
-                "phone_one": "738987448398854",
-                "phone_two": "",
-                "email": "suzanne.davis@example.net",
-                "avatar": "https:\/\/missions.dev\/images\/placeholders\/logo-placeholder.png",
-                "banner": null,
-                "reservations_count": 75,
-                "created_at": "2017-06-14 23:50:59",
-                "updated_at": "2017-06-15 00:00:36",
-                "links": [{"rel": "self", "uri": "\/groups\/10d394ba-3d88-3392-a19d-113f3aa7b565"}]
-            }, {
-                "id": "15e18ddd-9046-306e-b12b-352b4c6f81c7",
-                "status": "approved",
-                "name": "Will, Anderson and Lubowitz",
-                "type": "youth",
-                "timezone": "America\/New_York",
-                "description": "Alice looked up, and there stood the Queen merely remarking as it is.' 'I quite agree with you,' said the Gryphon,.",
-                "url": "will-anderson-and-lubowitz",
-                "public": true,
-                "address_one": null,
-                "address_two": null,
-                "city": "Port Alexa",
-                "state": null,
-                "zip": null,
-                "country_code": "ky",
-                "country_name": "Cayman Islands",
-                "phone_one": "635955899126287",
-                "phone_two": "",
-                "email": "constance.lockman@example.com",
-                "avatar": "https:\/\/missions.dev\/images\/placeholders\/logo-placeholder.png",
-                "banner": null,
-                "reservations_count": 75,
-                "created_at": "2017-06-14 23:50:59",
-                "updated_at": "2017-06-15 00:01:28",
-                "links": [{"rel": "self", "uri": "\/groups\/15e18ddd-9046-306e-b12b-352b4c6f81c7"}]
-            },
-            {
-                "id": "b0f45565-867b-32cd-92c9-3c5b254b082b",
-                "status": "approved",
-                "name": "Lemke, Ruecker and Schamberger",
-                "type": "youth",
-                "timezone": "America\/Paramaribo",
-                "description": "I don't know,' he went on in a shrill, passionate voice. 'Would YOU like cats if you wouldn't have come here.' Alice.",
-                "url": "lemke-ruecker-and-schamberger",
-                "public": true,
-                "address_one": "61200 Ward Common",
-                "address_two": null,
-                "city": null,
-                "state": "Hawaii",
-                "zip": "18276-8333",
-                "country_code": "kg",
-                "country_name": "Kyrgyzstan",
-                "phone_one": "18248126371",
-                "phone_two": "",
-                "email": "doyle.madie@example.com",
-                "avatar": "https:\/\/missions.dev\/images\/placeholders\/logo-placeholder.png",
-                "banner": null,
-                "reservations_count": 75,
-                "created_at": "2017-05-15 14:09:06",
-                "updated_at": "2017-05-15 14:10:58",
-                "links": [{"rel": "self", "uri": "\/groups\/b0f45565-867b-32cd-92c9-3c5b254b082b"}]
+        let body = {
+            "data": [
+                {
+                    "id": "043cddec-f698-39eb-874f-3de45e0ac0eb",
+                    "status": "approved",
+                    "name": "Kuvalis, Mraz and Hammes",
+                    "type": "youth",
+                    "timezone": "America\/Los_Angeles",
+                    "description": "Alice. 'That's the first to speak. 'What size do you mean by that?' said the Mock Turtle angrily: 'really you are very.",
+                    "url": "kuvalis-mraz-and-hammes",
+                    "public": true,
+                    "address_one": "462 Alfreda Islands",
+                    "address_two": "556",
+                    "city": null,
+                    "state": "California",
+                    "zip": "64577",
+                    "country_code": "ir",
+                    "country_name": "Iran (Islamic Republic of)",
+                    "phone_one": "4102237069",
+                    "phone_two": "",
+                    "email": "stehr.zoila@example.org",
+                    "avatar": "https:\/\/missions.dev\/images\/placeholders\/logo-placeholder.png",
+                    "banner": null,
+                    "reservations_count": 75,
+                    "created_at": "2017-06-14 23:50:59",
+                    "updated_at": "2017-06-15 00:00:14",
+                    "links": [{"rel": "self", "uri": "\/groups\/043cddec-f698-39eb-874f-3de45e0ac0eb"}]
+                }, {
+                    "id": "10d394ba-3d88-3392-a19d-113f3aa7b565",
+                    "status": "approved",
+                    "name": "Herman-O'Hara",
+                    "type": "youth",
+                    "timezone": "Indian\/Mauritius",
+                    "description": "Tortoise--' 'Why did you manage to do next, when suddenly a White Rabbit cried out, 'Silence in the direction in which.",
+                    "url": "herman-ohara",
+                    "public": true,
+                    "address_one": null,
+                    "address_two": "85737",
+                    "city": "Montanachester",
+                    "state": "Oklahoma",
+                    "zip": null,
+                    "country_code": "uz",
+                    "country_name": "Uzbekistan",
+                    "phone_one": "738987448398854",
+                    "phone_two": "",
+                    "email": "suzanne.davis@example.net",
+                    "avatar": "https:\/\/missions.dev\/images\/placeholders\/logo-placeholder.png",
+                    "banner": null,
+                    "reservations_count": 75,
+                    "created_at": "2017-06-14 23:50:59",
+                    "updated_at": "2017-06-15 00:00:36",
+                    "links": [{"rel": "self", "uri": "\/groups\/10d394ba-3d88-3392-a19d-113f3aa7b565"}]
+                }, {
+                    "id": "15e18ddd-9046-306e-b12b-352b4c6f81c7",
+                    "status": "approved",
+                    "name": "Will, Anderson and Lubowitz",
+                    "type": "youth",
+                    "timezone": "America\/New_York",
+                    "description": "Alice looked up, and there stood the Queen merely remarking as it is.' 'I quite agree with you,' said the Gryphon,.",
+                    "url": "will-anderson-and-lubowitz",
+                    "public": true,
+                    "address_one": null,
+                    "address_two": null,
+                    "city": "Port Alexa",
+                    "state": null,
+                    "zip": null,
+                    "country_code": "ky",
+                    "country_name": "Cayman Islands",
+                    "phone_one": "635955899126287",
+                    "phone_two": "",
+                    "email": "constance.lockman@example.com",
+                    "avatar": "https:\/\/missions.dev\/images\/placeholders\/logo-placeholder.png",
+                    "banner": null,
+                    "reservations_count": 75,
+                    "created_at": "2017-06-14 23:50:59",
+                    "updated_at": "2017-06-15 00:01:28",
+                    "links": [{"rel": "self", "uri": "\/groups\/15e18ddd-9046-306e-b12b-352b4c6f81c7"}]
+                },
+                {
+                    "id": "b0f45565-867b-32cd-92c9-3c5b254b082b",
+                    "status": "approved",
+                    "name": "Lemke, Ruecker and Schamberger",
+                    "type": "youth",
+                    "timezone": "America\/Paramaribo",
+                    "description": "I don't know,' he went on in a shrill, passionate voice. 'Would YOU like cats if you wouldn't have come here.' Alice.",
+                    "url": "lemke-ruecker-and-schamberger",
+                    "public": true,
+                    "address_one": "61200 Ward Common",
+                    "address_two": null,
+                    "city": null,
+                    "state": "Hawaii",
+                    "zip": "18276-8333",
+                    "country_code": "kg",
+                    "country_name": "Kyrgyzstan",
+                    "phone_one": "18248126371",
+                    "phone_two": "",
+                    "email": "doyle.madie@example.com",
+                    "avatar": "https:\/\/missions.dev\/images\/placeholders\/logo-placeholder.png",
+                    "banner": null,
+                    "reservations_count": 75,
+                    "created_at": "2017-05-15 14:09:06",
+                    "updated_at": "2017-05-15 14:10:58",
+                    "links": [{"rel": "self", "uri": "\/groups\/b0f45565-867b-32cd-92c9-3c5b254b082b"}]
+                }
+            ],
+            "meta": {
+                "pagination": {
+                    "total": 3,
+                    "count": 3,
+                    "per_page": 10,
+                    "current_page": 1,
+                    "total_pages": 1,
+                    "links": []
+                }
             }
-        ];
+        };
 
         if (pathMatch.group) {
             body.data = _.findWhere(body.data, {id: pathMatch.group});
@@ -3826,20 +3838,122 @@ export default {
     },
 
     // Uploads API
-    ['GET *uploads(/:id)'] (pathMatch, query, request) {
+    ['GET *uploads(/:upload)'] (pathMatch, query, request) {
         let body;
         switch (request.params.type) {
             case 'avatar':
+            default:
                 body = {
-                    "data": [],
+                    "data": [
+                        {
+                        "id": "90fd1c9a-78f1-4d2a-907d-31dbda79211e",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-white-400x400.jpg",
+                        "name": "1n1d17_white",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:50:59",
+                        "updated_at": "2017-06-14 23:50:59",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/90fd1c9a-78f1-4d2a-907d-31dbda79211e"}]
+                    }, {
+                        "id": "23615728-e37b-4559-bfff-62789f5c62e1",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg",
+                        "name": "a",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:51:21",
+                        "updated_at": "2017-06-14 23:51:21",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/23615728-e37b-4559-bfff-62789f5c62e1"}]
+                    }, {
+                        "id": "5ec67a1f-bcf8-4578-8f9b-0402a308e624",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg",
+                        "name": "a",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:52:40",
+                        "updated_at": "2017-06-14 23:52:40",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/5ec67a1f-bcf8-4578-8f9b-0402a308e624"}]
+                    }, {
+                        "id": "84633065-1975-4779-8309-b6b1e755782a",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg",
+                        "name": "a",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:51:15",
+                        "updated_at": "2017-06-14 23:51:15",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/84633065-1975-4779-8309-b6b1e755782a"}]
+                    }, {
+                        "id": "94c1b1c1-ae1c-4c83-ad0d-152eac4bf4cc",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg",
+                        "name": "a",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:52:48",
+                        "updated_at": "2017-06-14 23:52:48",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/94c1b1c1-ae1c-4c83-ad0d-152eac4bf4cc"}]
+                    }, {
+                        "id": "ea875a73-9a2c-4cfb-a010-27186c65d11e",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg",
+                        "name": "a",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:51:01",
+                        "updated_at": "2017-06-14 23:51:01",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/ea875a73-9a2c-4cfb-a010-27186c65d11e"}]
+                    }, {
+                        "id": "0a32f560-dcb1-4129-9a20-1714eec8448a",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-white-400x400.jpg",
+                        "name": "ab",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:52:29",
+                        "updated_at": "2017-06-14 23:52:29",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/0a32f560-dcb1-4129-9a20-1714eec8448a"}]
+                    }, {
+                        "id": "235ed5ce-46ad-4d6e-bcc4-6d6d9be867c8",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg",
+                        "name": "ab",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:51:12",
+                        "updated_at": "2017-06-14 23:51:12",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/235ed5ce-46ad-4d6e-bcc4-6d6d9be867c8"}]
+                    }, {
+                        "id": "6cbb03dc-abf1-4d65-a9a2-a662f719d17b",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-dark-400x400.jpg",
+                        "name": "ab",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:52:44",
+                        "updated_at": "2017-06-14 23:52:44",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/6cbb03dc-abf1-4d65-a9a2-a662f719d17b"}]
+                    }, {
+                        "id": "6e593928-716f-4fff-bb37-dcb12716c6de",
+                        "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-red-400x400.jpg",
+                        "name": "ab",
+                        "type": "avatar",
+                        "meta": null,
+                        "created_at": "2017-06-14 23:51:07",
+                        "updated_at": "2017-06-14 23:51:07",
+                        "tags": [],
+                        "links": [{"rel": "self", "uri": "\/uploads\/6e593928-716f-4fff-bb37-dcb12716c6de"}]
+                    }],
                     "meta": {
                         "pagination": {
-                            "total": 0,
-                            "count": 0,
-                            "per_page": 6,
+                            "total": 1659,
+                            "count": 10,
+                            "per_page": 10,
                             "current_page": 1,
-                            "total_pages": 0,
-                            "links": []
+                            "total_pages": 166,
+                            "links": {"next": "https:\/\/missions.dev\/api\/uploads?page=2"}
                         }
                     }
                 };
@@ -3927,6 +4041,12 @@ export default {
                 break;
         }
 
+        if (pathMatch.upload) {
+            body.data = _.findWhere(body.data, {id: pathMatch.upload});
+            delete body.meta;
+        }
+
+
         return {
             body: body,
             status: 200,
@@ -3935,6 +4055,27 @@ export default {
             delay: Settings.delay, // millisecond
         }
 
+    },
+    ['POST *uploads(/:upload)'] (pathMatch, query, request) {
+        let body = {
+            "id": "b4da362f-2524-4eb7-abaa-8aceb6fdd618",
+            "source": "https:\/\/missions.dev\/api\/images\/avatars\/1n1d17-white-400x400.jpg",
+            "name": request.body.name || "1n1d17_white",
+            "type": request.body.type || "avatar",
+            "meta": null,
+            "created_at": "2017-06-14 23:50:59",
+            "updated_at": "2017-06-14 23:50:59",
+            "tags": request.body.tags || [],
+            "links": [{"rel": "self", "uri": "\/uploads\/90fd1c9a-78f1-4d2a-907d-31dbda79211e"}]
+        };
+
+        return {
+            body: body,
+                status: 200,
+                statusText: 'OK',
+                headers: {/*headers*/},
+            delay: Settings.delay, // millisecond
+        }
     },
 
     // Utilities API

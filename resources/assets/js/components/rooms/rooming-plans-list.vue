@@ -121,11 +121,11 @@
 						</div>
 
 						<div class="form-group" :class="{'has-error': $PlanCreate.teamgroup.invalid}" v-if="isAdminRoute">
-							<label>Travel Group</label>
-							<v-select @keydown.enter.prevent="" class="form-control" id="groupFilter" :debounce="250" :on-search="getGroups"
-							          :value.sync="selectedNewPlan.group" :options="groupsOptions" label="name"
-							          placeholder="Assign Travel Group"></v-select>
-							<select class="hidden" v-model="selectedNewPlan.group" v-validate:teamgroup="['required']">
+							<label>Travel Groups</label>
+							<v-select @keydown.enter.prevent="" class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
+							          :value.sync="selectedNewPlan.groups" :options="groupsOptions" label="name"
+							          placeholder="Assign Travel Groups"></v-select>
+							<select class="hidden" v-model="selectedNewPlan.groups" multiple v-validate:teamgroup="['required']">
 								<option :value="group" v-for="group in groupsOptions">{{group.name | capitalize}}</option>
 							</select>
 						</div>
@@ -154,6 +154,16 @@
 						<div class="form-group" :class="{'has-error': $PlanSettings.plandesc.invalid}">
 							<label for="updatePlanDesc" class="control-label">Short Description</label>
 							<textarea autosize="selectedPlanSettings.short_desc" class="form-control" id="updatePlanDesc" v-model="selectedPlanSettings.short_desc" v-validate:plandesc="['required']"></textarea>
+						</div>
+
+						<div class="form-group" :class="{'has-error': $PlanSettings.teamgroup.invalid}" v-if="isAdminRoute">
+							<label>Travel Groups</label>
+							<v-select @keydown.enter.prevent="" class="form-control" id="groupFilter" multiple :debounce="250" :on-search="getGroups"
+							          :value.sync="selectedPlanSettings.groups" :options="groupsOptions" label="name"
+							          placeholder="Assign Travel Groups"></v-select>
+							<select class="hidden" v-model="selectedPlanSettings.groups" multiple v-validate:teamgroup="['required']">
+								<option :value="group" v-for="group in groupsOptions">{{group.name | capitalize}}</option>
+							</select>
 						</div>
 
 						<div class="form-group" v-for="type in roomTypes">
@@ -233,7 +243,8 @@
                     rooms: [],
                     locked: false,
                     campaign_id: this.$parent.campaignId,
-                    group_id: this.$parent.groupId,
+                    groups: [],
+                    group_ids: [this.$parent.groupId],
                     room_types_settings: {},
                 },
 	            selectedPlan: null,
@@ -248,6 +259,7 @@
                     updated_at: 'Updated At'
                 },
                 exportFilters: {},
+
             }
         },
 	    watch: {
@@ -358,7 +370,7 @@
 	        handleRoomTypeSettings(plan, settings, promises) {
                 _.each(settings, function (val, property) {
                     let promise;
-                    if (property.indexOf('_method') === -1 && !_.contains(['short_desc', 'name'], property)) {
+                    if (property.indexOf('_method') === -1 && !_.contains(['short_desc', 'name', 'groups', 'group_ids'], property)) {
                         if (settings[property + '_method'] === 'PUT') {
                             if (val > 0) {
                                 promise = this.PlansResource.update({
@@ -392,12 +404,15 @@
 	        },
             updatePlanSettings() {
                 let promises = [];
+                let settingsData = _.extend({}, this.selectedPlanSettings);
+                settingsData.group_ids = _.pluck(settingsData.groups, 'id');
+                delete settingsData.groups;
 
                 // update name and short_desc properties
 	            promises.push(this.PlansResource.update({ plan: this.selectedPlan.id},
-		            { name: this.selectedPlanSettings.name, short_desc: this.selectedPlanSettings.short_desc}));
+		            { name: settingsData.name, short_desc: settingsData.short_desc, group_ids: settingsData.group_ids}));
 
-	            this.handleRoomTypeSettings(this.selectedPlan, this.selectedPlanSettings, promises);
+	            this.handleRoomTypeSettings(this.selectedPlan, settingsData, promises);
 
                 Promise.all(promises).then(function () {
                     this.showPlanSettingsModal = false;
@@ -449,7 +464,8 @@
                 let data = _.extend({}, this.selectedNewPlan);
                 let room_types_settings = _.extend({}, data.room_types_settings);
                 delete data.room_types_settings;
-                delete data.group;
+                data.group_ids = _.pluck(data.groups, 'id');
+                delete data.groups;
 
                 if (this.$PlanCreate.valid) {
                     return this.PlansResource.save(data, { include: 'group' }).then(function (response) {
@@ -472,6 +488,9 @@
                     this.$root.$emit('showError', 'Please provide a name for the new plan');
                 }
             },
+	        handlePlanGroupAssociations(){
+
+	        },
         },
         ready(){
             if (this.isAdminRoute) {

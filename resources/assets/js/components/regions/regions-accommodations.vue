@@ -271,7 +271,7 @@
                                                     {{accommodation.state}} {{accommodation.zip}}
                                                     <br>
                                                 </span>
-												{{accommodation.country.name}}
+												<span v-if="accommodation.country">{{accommodation.country.name}}</span>
 											</p>
 											<template v-if="accommodation.phone">
 												<label>Phone</label>

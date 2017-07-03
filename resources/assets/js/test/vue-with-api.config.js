@@ -315,6 +315,15 @@ Vue.filter('underscoreToSpace', function (value) {
     return value.replace(/_/g, ' ');
 });
 
+Vue.mixin({
+    data() {
+        return {
+            // use as data property instead of computed for easy switching
+            isAdminRoute: true,
+        }
+    }
+});
+
 let RootInstance = {
     http: {
         headers: {
@@ -322,7 +331,6 @@ let RootInstance = {
         }
     },
     data: {
-        isAdminRoute: false,
         userId: '',
         someObject: {},
         someArray: [],
@@ -437,7 +445,7 @@ let RootInstance = {
             console.log('callback function called');
         },
         filtersMethodsReset(){
-            this.filterVars.filters = {
+            this.filtersVars.filters = {
                 type: '',
                 //tags: [],
                 user: [],
@@ -461,9 +469,19 @@ let RootInstance = {
                 maxPercentRaised: '',
                 minAmountRaised: '',
                 maxAmountRaised: ''
-            }
+            };
             console.log('reset callback function called');
         },
+
+        // Simple error handlers for API calls
+        handleApiSoftError(response) {
+            console.error(response.body.message ? response.body.message : response.body);
+        },
+        handleApiError(response) {
+            console.error(response.body.message ? response.body.message : response.body);
+            this.$root.$emit('showError', response.body.message)
+        },
+
 
     },
     events: {

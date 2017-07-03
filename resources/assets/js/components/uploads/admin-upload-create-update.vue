@@ -420,12 +420,8 @@
 				if (!this.constrained && this.slimAPI) {
                     this.slimAPI[0].ratio = w + ':' + h;
                 }
-//				this.vueCropApi.setSelect([this.coords.x, this.coords.y, w, h]);
+				// this.vueCropApi.setSelect([this.coords.x, this.coords.y, w, h]);
 			},
-            /*checkForError(field){
-                // if upload clicked submit button while the field is invalid trigger error styles 
-                return this.$CreateUpload[field].invalid && this.attemptSubmit;
-            },*/
             submit(){
 				this.resetErrors();
                 if (this.$CreateUpload.valid) {
@@ -543,14 +539,11 @@
 					tags: this.tags
 				};
 
-				this.$http.get('uploads', { params: params }).then(function (response) {
+				return this.$http.get('uploads', { params: params }).then(function (response) {
 					this.uploads = response.body.data;
 					this.pagination = response.body.meta.pagination;
 					return this.uploads;
-				}, function (response) {
-                    console.log(response);
-                    return response
-                });
+				}, this.$root.handleApiError);
 			},
 			selectExisting(upload){
 				// Assumes this is a child component
