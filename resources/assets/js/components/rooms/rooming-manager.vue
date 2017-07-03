@@ -895,7 +895,7 @@
                 if (_.isObject(this.reservationFilters.role)) {
                     params.role = this.reservationFilters.role.value;
                 }
-                params.groups = new Array(this.currentPlan.groups.data.id);
+                params.groups = _.pluck(this.currentPlan.groups.data, 'id');
 	            if (this.reservationFilters.groups.length)
                     params.groups = _.union(params.groups, _.pluck(this.reservationFilters.groups, 'id'));
 
