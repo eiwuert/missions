@@ -61,9 +61,13 @@ class RoomFilter extends Filter
         });
     }
 
-    public function notInUse()
+    public function notInUse($regionId = null)
     {
-        return $this->has('accommodations', '<', 1);
+        if (! $regionId) return $this->has('accommodations', '<', 1);
+
+        return $this->whereDoesntHave('accommodations', function($query) use ($regionId) {
+            return $query->where('region_id', $regionId);
+        });
     }
 
     /**

@@ -24,7 +24,8 @@ class Kernel extends ConsoleKernel
         Commands\AddTodoToTrips::class,
         Commands\AddRequirementToTrips::class,
         Commands\ExtractAccounting::class,
-        Commands\ArchiveOldFunds::class
+        Commands\ArchiveOldFunds::class,
+        Commands\Utilities\UpdateRoomingPlansToMultiGroups::class
     ];
 
     /**

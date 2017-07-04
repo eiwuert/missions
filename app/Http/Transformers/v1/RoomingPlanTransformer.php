@@ -54,7 +54,7 @@ class RoomingPlanTransformer extends TransformerAbstract
         if (! is_null($params) && $params->get('notInUse')) {
             $this->validateParams($params);
 
-            $rooms = $plan->rooms()->filter(['notInUse' => true])->get();
+            $rooms = $plan->rooms()->filter(['notInUse' => $params->get('notInUse')])->get();
 
         } else {
             $rooms = $plan->rooms;

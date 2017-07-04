@@ -306,7 +306,11 @@
                     include: '',
                 };
                 params = _.extend(params, {
+<<<<<<< Updated upstream
                     groups: _.pluck(this.filters.groups, 'id'),
+=======
+                    groups: this.filters.group ? this.filters.group.id : null,
+>>>>>>> Stashed changes
 	                search: this.search,
 	                per_page: this.per_page,
 					page: this.pagination.current_page,

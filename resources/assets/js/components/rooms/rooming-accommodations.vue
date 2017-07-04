@@ -374,6 +374,8 @@
                     this.accommodations = [];
                     this.accommodationsPagination = { current_page: 1 };
                 }
+
+                this.getRoomingPlans();
             },
             currentAccommodation(val) {
                 if (val) {
@@ -492,13 +494,14 @@
                 }, this.$root.handleApiError);
             },
             getRoomingPlans(){
+                let regionId = this.currentRegion ? this.currentRegion.id : '';
                 let params = {
-                    include: 'rooms:notInUse,rooms.occupants',
+                    include: 'rooms:notInUse('+ regionId +'),rooms.occupants',
                 };
                 params = _.extend(params, {
                     campaign: this.campaignId,
                     group: this.plansFilters.group ? this.plansFilters.group.id : null,
-                    notInUse: true,
+                    notInUse: this.currentRegion ? this.currentRegion.id : null,
                     search: this.plansSearch,
                     per_page: this.per_page,
                 });

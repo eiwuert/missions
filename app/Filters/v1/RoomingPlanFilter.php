@@ -8,7 +8,7 @@ class RoomingPlanFilter extends Filter
     *
     * @var array
     */
-    public $relations = [];
+    public $relations = ['rooms' => ['notInUse']];
 
     /**
      * Default sortable fields.
@@ -33,13 +33,6 @@ class RoomingPlanFilter extends Filter
     {
         return $this->whereHas('groups', function ($query) use ($ids) {
             $query->whereIn('id', $ids);
-        });
-    }
-
-    public function notInUse()
-    {
-        return $this->whereHas('rooms', function ($room) {
-            return $room->has('accommodations', '<', 1);
         });
     }
 }
